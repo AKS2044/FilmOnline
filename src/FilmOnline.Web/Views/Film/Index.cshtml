@@ -1,0 +1,143 @@
+﻿@model FilmModelResponse
+@{
+    ViewBag.Title = @Html.DisplayFor(model => model.NameFilms);
+}
+
+<main class="main__view-film">
+    <div class="film__info">
+        <div class="film__poster">
+            <img src="@Html.DisplayFor(model => model.PathPoster)" class="view__poster" alt="">
+        </div>
+        <div class="film__about">
+            <div class="film__name">@Html.DisplayFor(model => model.NameFilms)</div>
+            <div class="film__line"></div>
+            <div class="film__data">
+                <div class="data__size">
+                    <div class="film__year film__about-style">Год производства:</div>
+                    <div class="film__year film__about-style">@Html.DisplayFor(model => model.ReleaseDate)</div>
+                </div>
+                <div class="data__size">
+                    <div class="film__country film__about-style">Страна:</div>
+                    <div class="new__item film__country">
+                        @foreach (var item in Model.Country)
+                        {
+                            <p>@item</p>
+                        }
+                    </div>
+                </div>
+                <div class="data__size">
+                    <div class="film__genre film__about-style">Жанр:</div>
+                    <div class="film__genre new__item">
+                        @foreach (var item in Model.Genre)
+                        {
+                            <p>@item</p>
+                        }
+                    </div>
+                </div>
+                <div class="data__size">
+                    <div class="film__age film__about-style">Возраст:</div>
+                    <div class="film__age film__about-style">@Html.DisplayFor(model => model.AgeLimit)+</div>
+                </div>
+                <div class="data__size">
+                    <div class="film__manager film__about-style">Режиссер:</div>
+                    <div class="film__manager new__item">
+                        @foreach (var item in Model.StageManagers)
+                        {
+                            <p>@item</p>
+                        }
+                    </div>
+                </div>
+                <div class="data__size">
+                    <div class="film__time film__about-style">Время:</div>
+                    <div class="film__time film__about-style">@Html.DisplayFor(model => model.Time) мин</div>
+                </div>
+                <div class="data__size">
+                    <div class="film__role film__about-style">В главных ролях:</div>
+                    <div class="film__role new__item">
+                        @foreach (var item in Model.Actors)
+                        {
+                            <p>@item.FirstName @item.LastName</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="film__description">
+        <div class="description">Описание:</div>
+        <div class="description__text">@Html.DisplayFor(model => model.Description)</div>
+    </div>
+    <div class="film__rating">
+        <div class="rating__star">
+            @for (int i = 0; i < 10; i++)
+            {
+                <img src="~/img/favourite.png" width="40px" height="40px" alt="">
+            }
+        </div>
+
+        <div class="rating__world">
+            <div class="rating__sait">Рейтинг сайта: @Html.DisplayFor(model => model.RatingSite)</div>
+            <div class="rating__kinopoisk">kinopoisk: @Html.DisplayFor(model => model.RatingKinopoisk)</div>
+            <div class="rating__imdb">IMDb: @Html.DisplayFor(model => model.RatingImdb)</div>
+        </div>
+    </div>
+    <div class="film__description">
+        <div class="media__use">
+            <a href="#"><div class="button__film-post">Избранное</div></a>
+            <a href="#"><div class="button__film-post">Смотреть позже</div></a>
+            <a href="#openModal"><div class="button__film-post">Трейлер</div></a>
+        </div>
+        <div>
+            <img class="media__player" src="~/img/play.png" alt="">
+        </div>
+    </div>
+    <div class="film__description recommend-style">
+        <div class="description">Мы рекомендуем:</div>
+        <div class="recommend">
+            @foreach (var item in ViewBag.Recommended)
+            {
+                <a asp-action="Index" asp-controller="Film" asp-route-id="@item.Id" class="film__link">
+                    <div class="best__films">
+                        <img src="@Url.Content(item.PathPoster)" class="recommend__film" alt="">
+                        <div class="name__film">@item.NameFilms</div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+    <div class="film__description">
+        <div class="description">Добавить комментарий:</div>
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function () { // DON'T EDIT BELOW THIS LINE
+                var d = document, s = d.createElement('script');
+                s.src = 'https://filmlogo.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+    <div id="openModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">@Html.DisplayFor(model => model.NameFilms)</h3>
+                    <a href="#close" title="Close" class="close">×</a>
+                </div>
+                <div class="modal-body">
+                    <iframe width="560" height="315" src="@Url.Content(Model.LinkFilmtrailer)" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

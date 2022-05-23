@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>FilmOnline.Logic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FilmOnline.Data\FilmOnline.Data.csproj" />
+    <ProjectReference Include="..\FilmOnline.Web.Shared\FilmOnline.Web.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

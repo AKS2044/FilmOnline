@@ -1,0 +1,14 @@
+﻿@model IEnumerable<ProfileUserResponse>
+
+<main class="main__profile">
+    @foreach (var item in Model)
+    {
+
+        <form class="delete__user" asp-action="Delete" asp-route-id="@item.Id" method="post">
+            @item.UserName
+            <button type="submit" class="btn btn-sm btn-danger">
+                Удалить
+            </button>
+        </form>
+    }
+</main>

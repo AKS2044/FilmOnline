@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cuprum:wght@700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <title>@ViewData["Title"] - LogoFilm</title>
+</head>
+<body class="page light-theme">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__menu">
+                <a asp-controller="Home" asp-action="Index" class="">
+                    <div class="header__logo">LogoFilm</div>
+                </a>
+                <div class="nav__menu">
+                    <a class="nav__link" href="">Новинки</a>
+                    <a class="nav__link" href="">Премьеры</a>
+                    <a asp-action="Index" asp-controller="Film" asp-route-id="@ViewBag.RandomFilm" class="nav__link">Случайный</a>
+                    <a class="nav__link" href="">Рекомендации</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- User menu -->
+    <div class="container">
+        <div class="user__menu">
+            <div class="choice__theme">
+                <button class="theme-button registration__user button__use" type="button">Изменить тему</button>
+            </div>
+
+            <div class="login__password">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="user__block">
+                        Hello, <a asp-controller="Account" asp-action="Profile" asp-route-userName="@User.Identity.Name">@User.Identity.Name</a>
+                        <form method="post" asp-controller="Account" asp-action="Logout">
+                            <input class="registration__user button__use" type="submit" value="Выход" />
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="registration__user button__use">Вход</a>
+                    <a asp-controller="Account" asp-action="Register" class="registration__user button__use">Регистрация</a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Home" asp-action="Admin" class="registration__user button__use">Админ панель</a>
+                }
+            </div>
+            <div class="search__films">
+                <form asp-controller="Home" asp-action="Search" method="get" class="search__button">
+                    <input name="name" type="text" class="search" placeholder="В чем дело, Док?">
+                    <button type="submit" class="button__search">
+                        <svg class="svg__search" width="17" height="17" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14.7071 14.2929L22.7071 22.2929M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke-width="2" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- New films -->
+    <div class="container">
+        <div class="new__films">
+            @foreach (var item in ViewBag.Films)
+            {
+                <a asp-action="Index" asp-controller="Film" asp-route-id="@item.Id" class="film__link">
+                    <div class="block__films">
+                        <img src="@Url.Content(item.PathPoster)" class="poster__film" alt="">
+                        <div class="name__film">@item.NameFilms</div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Main block -->
+    <div class="container">
+        <div class="main__block">
+            @RenderBody()
+
+            <div class="main__menu">
+                <div class="block__menu">
+                    <div class="menu__name">
+                        <div class="menu__text">Жанры</div>
+                    </div>
+
+                    <div class="all_genres">
+                        @foreach (var item in ViewBag.Genres)
+                        {
+
+                            <div class="genre__block-link">
+                                <a asp-action="Genre" asp-controller="Film" asp-route-id="@item.Id" class="genre__link">
+                                    <div class="name__genre">@item.Genres</div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__main">
+                <div class="footer__info">
+                    <div class="info__sub">
+                        LogoFilm - твой гид в мире кино.
+                    </div>
+                </div>
+
+                <div class="footer__social">
+                    <a href="" class="social__site"><div class="info__sub">Telegram</div></a>
+                    <a href="" class="social__site"><div class="info__sub">VKontakte</div></a>
+                    <a href="" class="social__site"><div class="info__sub">Instagram</div></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/Script/theme.js"></script>
+</body>
+</html>

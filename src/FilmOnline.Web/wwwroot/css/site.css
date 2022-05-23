@@ -1,0 +1,1732 @@
+﻿body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    margin: 0;
+    background: white;
+    width: 100%;
+}
+
+/* Light theme*/
+.light-theme {
+    color: #243B55;
+    background-color: white;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+.add__input {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: none;
+}
+
+.addFilm__block {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.new-item {
+    margin-bottom: 10px;
+}
+
+.block-list {
+    text-align: center;
+}
+
+.light-theme input {
+    border: none;
+    outline: none;
+    background-color: #F2F2F2;
+    color: #243B55;
+}
+
+:focus::-webkit-input-placeholder {
+    color: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+:focus::-moz-placeholder {
+    color: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+:focus:-moz-placeholder {
+    color: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+:focus:-ms-input-placeholder {
+    color: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.new__item {
+    line-height: 0.2em;
+    font-size: 1em;
+    width: 200px;
+}
+
+/* Search */
+.light-theme .search__main {
+    display: flex;
+    flex-direction: column;
+}
+
+.light-theme .main__search {
+    width: 925px;
+    border: 1px solid #C7C7C7;
+    display: flex;
+    justify-content: center;
+    padding: 50px 0px;
+}
+
+.search__button {
+    display: flex;
+    justify-content: center;
+}
+
+/* Rating */
+.light-theme .rating {
+    width: 215px;
+    height: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    .light-theme .rating:not(:checked) > input {
+        display: none;
+    }
+
+    .light-theme .rating:not(:checked) > label {
+        width: 25px;
+        cursor: pointer;
+        font-size: 25px;
+        color: lightgrey;
+        text-align: center;
+        line-height: 1;
+    }
+
+        .light-theme .rating:not(:checked) > label:before {
+            content: '★';
+        }
+
+    .light-theme .rating > input:checked ~ label {
+        color: gold;
+    }
+
+    .light-theme .rating:not(:checked) > label:hover,
+    .light-theme .rating:not(:checked) > label:hover ~ label {
+        color: gold;
+    }
+
+    .light-theme .rating > input:checked + label:hover,
+    .light-theme .rating > input:checked + label:hover ~ label,
+    .light-theme .rating > input:checked ~ label:hover,
+    .light-theme .rating > input:checked ~ label:hover ~ label,
+    .light-theme .rating > label:hover ~ input:checked ~ label {
+        color: gold;
+    }
+
+/* Registration */
+.light-theme .mine__form {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 26px;
+    color: #243B55;
+}
+
+.light-theme .mine__input {
+    width: 300px;
+    height: 30px;
+    border-radius: 16px;
+    border: 1px solid #C7C7C7;
+    padding-left: 10px;
+}
+
+.light-theme .main__common-block {
+    width: 925px;
+    border: 1px solid #C7C7C7;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 100px;
+}
+
+.registration__block {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.light-theme .mine__button {
+    width: 100%;
+    height: 40px;
+    background: white;
+    border: 1px solid #C7C7C7;
+    border-radius: 5px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    line-height: 0;
+    cursor: pointer;
+}
+
+    .light-theme .mine__button:hover {
+        background: #243B55;
+        color: white;
+        transition: 0.1s linear;
+    }
+
+/*Profile*/
+.light-theme .main__profile {
+    width: 925px;
+    height: 100%;
+    border: 1px solid #C7C7C7;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 100px 212px 100px 212px;
+}
+
+.light-theme .profile__box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.light-theme .delete__user {
+    display: flex;
+}
+
+.light-theme .text__profile {
+    font-weight: 500;
+    color: #243B55;
+}
+
+.light-theme .profile__border {
+    border-bottom: 2px solid #F2F2F2;
+}
+
+/*Login*/
+.main__login {
+    width: 925px;
+    height: 500px;
+    border: 1px solid #C7C7C7;
+    background-color: #F2F2F2;
+    display: flex;
+    flex-direction: column;
+    padding: 100px 312px 0px 312px;
+}
+
+.login__form {
+    width: 300px;
+}
+
+/* Header */
+.light-theme .header {
+    background-color: #243B55;
+    width: 100%;
+}
+
+.header__menu {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__logo {
+    font-family: 'Cuprum', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 42px;
+    line-height: 55px;
+    color: #FFFFFF;
+}
+
+.nav__menu {
+    width: 500px;
+    height: 35px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.light-theme .nav__link {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 31px;
+    color: white;
+}
+
+    .light-theme .nav__link:hover {
+        border-bottom: 2px solid white;
+    }
+
+/* User menu */
+.light-theme .user__menu {
+    border: 1px solid #C7C7C7;
+    height: 40px;
+    padding: 0 16px 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.light-theme .user__name {
+    font-weight: 500;
+    color: #243B55;
+    margin-right: 8px;
+}
+
+.light-theme .user__block {
+    display: flex;
+}
+
+.registration__user {
+    font-size: 14px;
+}
+
+.light-theme .input__use {
+    border-radius: 16px;
+    border: 1px solid #C7C7C7;
+    width: 140px;
+    height: 20px;
+    padding-left: 10px;
+}
+
+.light-theme .button__use {
+    height: 25px;
+    background: white;
+    border: 1px solid #C7C7C7;
+    color: #243B55;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding: 5px;
+    cursor: pointer;
+    margin: 0px 3px;
+}
+
+    .light-theme .button__use:hover {
+        background: #243B55;
+        color: white;
+        transition: 0.1s linear;
+    }
+
+.light-theme .login__password {
+    display: flex;
+}
+
+.search__films {
+    display: flex;
+}
+
+.light-theme .extended__search {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 17px;
+    text-decoration-line: underline;
+    cursor: pointer;
+    color: #243B55;
+    margin-right: 10px;
+}
+
+.light-theme .search {
+    padding-left: 10px;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border: 1px solid #C7C7C7;
+    width: 250px;
+    height: 20px;
+}
+
+.light-theme .button__search {
+    background: white;
+    border: 1px solid #C7C7C7;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    cursor: pointer;
+    height: 20px;
+}
+
+.light-theme .svg__search {
+    stroke: #243B55;
+}
+
+/* New films */
+.light-theme .new__films {
+    height: 255px;
+    border: 1px solid #C7C7C7;
+    border-top: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.light-theme .block__films {
+    width: 150px;
+    height: 245px;
+    background-color: #243B55;
+    border-radius: 7px;
+    border: 1px solid #2B5381;
+    padding: 4px 4px 0 4px;
+}
+
+.light-theme .best__films {
+    width: 133px;
+    height: 210px;
+    background-color: #243B55;
+    border-radius: 7px;
+    border: 1px solid #2B5381;
+    padding: 4px 4px 0 4px;
+}
+
+.light-theme .poster__film {
+    border-radius: 7px;
+    width: 100%;
+    height: 200px;
+    border: 1px solid #2B5381;
+}
+
+.light-theme .name__film {
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 87%;
+    text-align: center;
+    color: white;
+}
+
+/* Main block */
+.main__block {
+    display: flex;
+    justify-content: space-between;
+}
+
+.light-theme .page__block {
+    display: flex;
+    width: 925px;
+    height: 34px;
+    align-self: flex-end;
+    flex-direction: column;
+    margin-top: 5px;
+}
+
+.light-theme .main__films {
+    width: 925px;
+    /*height: 1144px;*/
+    border: 1px solid #C7C7C7;
+    border-top: none;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 4px 4px 0px 4px;
+}
+
+.light-theme .post__films {
+    width: 225px;
+    height: 375px;
+    background-color: #243B55;
+    border-radius: 7px;
+    border: 1px solid #2B5381;
+    padding: 4px 4px 0 4px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.light-theme .main__poster {
+    border-radius: 7px;
+    border: 1px solid #2B5381;
+    height: 300px;
+    width: 100%;
+}
+
+.post__name-block {
+    width: 100%;
+    height: 40px;
+}
+
+.light-theme .post__name {
+    font-size: 16px;
+    line-height: 1em;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+/* Menu */
+.light-theme .block__menu {
+}
+
+.light-theme .menu__name {
+    width: 270px;
+    margin-top: 5px;
+    border: 1px solid #C7C7C7;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px;
+}
+
+.light-theme .menu__text {
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 15px;
+    text-align: center;
+    color: white;
+    height: 40px;
+    background-color: #243B55;
+    border-radius: 7px;
+    padding: 10px;
+}
+
+.light-theme .name__genre {
+    width: 50%;
+    font-size: 1em;
+    line-height: 1em;
+    text-align: center;
+    color: #243B55;
+}
+
+.light-theme .all_genres {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 270px;
+    border: 1px solid #C7C7C7;
+    border-top: none;
+    padding: 10px;
+}
+
+.light-theme .genre__block-link {
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    width: 120px;
+}
+/* Footer */
+.footer__main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 150px;
+}
+
+.light-theme .footer {
+    width: 100%;
+    margin-top: 15px;
+    background-color: #243B55;
+}
+
+.footer__social {
+    display: flex;
+}
+
+.light-theme .info__sub {
+    font-family: 'Cuprum', sans-serif;
+    font-size: 24px;
+    line-height: 31px;
+    color: #FFFFFF;
+}
+
+.social__site {
+    margin-left: 10px;
+}
+
+/*Add film*/
+.light-theme .main__addFilm {
+    width: 925px;
+    border: 1px solid #C7C7C7;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 100px;
+}
+
+/* New CSS */
+.film__info {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0 0 8px;
+}
+
+.film__data {
+    width: 500px;
+}
+
+.data__size {
+    display: flex;
+    justify-content: space-between;
+}
+
+.film__roles {
+    width: 195px;
+    font-size: 18px;
+    line-height: 92.5%;
+    color: #243B55;
+    text-align: right;
+}
+
+.light-theme .film__poster {
+    width: 320px;
+    height: 450px;
+    background: #243B55;
+    border-radius: 7px;
+    padding: 10px;
+    margin: 0 16px 16px 0;
+}
+
+.view__poster {
+    width: 300px;
+    height: 100%;
+    border-radius: 7px;
+}
+
+.light-theme .film__name {
+    width: 576px;
+    font-family: Roboto;
+    font-size: 36px;
+    line-height: 42px;
+    color: #243B55;
+}
+
+.light-theme .film__about-style {
+    font-family: Roboto, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 92.5%;
+    color: #243B55;
+    padding: 8px 0;
+    width: 200px;
+}
+
+.light-theme .main__view-film {
+    width: 925px;
+    border: 1px solid #C7C7C7;
+}
+
+.film__line {
+    border: 1px solid #C7C7C7;
+    margin: 10px 0;
+}
+
+/* Description */
+.light-theme .film__description {
+    width: 100%;
+    background: #F8F8F8;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.light-theme .description {
+    font-weight: 500;
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #243B55;
+}
+
+.light-theme .description__text {
+    width: 100%;
+    line-height: 87%;
+    color: #243B55;
+}
+
+/* Rating */
+.light-theme .film__rating {
+    width: 923px;
+    background: #F8F8F8;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.light-theme .rating__star {
+    display: flex;
+    margin-right: 20px;
+    width: 500px;
+    justify-content: space-between;
+}
+
+.light-theme .rating__sait {
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #243B55;
+}
+
+    .light-theme .rating__sait:after {
+        content: "";
+        display: block;
+        width: 366px;
+        height: 1px;
+        background-color: #243B55;
+    }
+
+.rating__world {
+    width: 386px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.light-theme .rating__kinopoisk {
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #243B55;
+    margin-right: 10px;
+}
+
+.light-theme .rating__imdb {
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #243B55;
+    border-left: 1px solid #243B55;
+    padding-left: 10px;
+}
+
+/* Media player */
+
+.media__player {
+    width: 100%;
+    height: 100%;
+    border-radius: 7px;
+}
+
+.media__use {
+    margin-bottom: 8px;
+    display: flex;
+}
+
+.light-theme .button__film-post {
+    height: 34px;
+    width: fit-content;
+    padding: 6px;
+    background: #F8F8F8;
+    border: 1px solid #243B55;
+    border-radius: 7px;
+    font-weight: 500;
+    color: #243B55;
+    margin-right: 6px;
+}
+
+    .light-theme .button__film-post:hover {
+        background: #243B55;
+        border: 1px solid white;
+        color: #FFFFFF;
+        transition: 0.1s linear;
+    }
+
+/* Recommend */
+.recommend {
+    display: flex;
+    justify-content: space-between;
+}
+
+.recommend__film {
+    width: 100%;
+    height: 184px;
+    border-radius: 7px;
+}
+
+.textarea__comments {
+    width: 450px;
+    height: 250px;
+}
+
+.post__comments {
+    width: 150px;
+    height: 34px;
+    padding: 6px;
+    background: #F8F8F8;
+    border: 1px solid #243B55;
+    border-radius: 7px;
+    color: #243B55;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 21px;
+}
+
+    .post__comments:hover {
+        color: white;
+        background: #243B55;
+        transition: 0.1s linear;
+    }
+
+.add__comments {
+    display: flex;
+    align-items: center;
+}
+
+/*Admin panel*/
+.admin__main {
+    padding: 50px;
+}
+
+.admin__control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.light-theme .button__admin-panel {
+    padding: 6px;
+    border: 1px solid #243B55;
+    border-radius: 7px;
+    font-weight: 500;
+    color: #243B55;
+    margin-right: 6px;
+    text-align: center;
+}
+
+    .light-theme .button__admin-panel:hover {
+        background: #243B55;
+        border: 1px solid white;
+        color: #FFFFFF;
+        transition: 0.1s linear;
+    }
+
+/*Public style*/
+.item__view {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 16px;
+}
+
+.item__view-block {
+    display: flex;
+    width: 300px;
+    justify-content: space-between;
+}
+
+/* Dark theme */
+.dark-theme {
+    color: #c8c8c8;
+    background-color: #18171C;
+}
+
+    .dark-theme body {
+        background-color: #18171C;
+    }
+
+    .dark-theme .mine__input {
+        border: 1px solid #19293b;
+    }
+
+    .dark-theme .input__use {
+        border: 1px solid #C7C7C7;
+    }
+
+    .dark-theme .button__use {
+        background: white;
+        border: 1px solid #C7C7C7;
+    }
+
+    .dark-theme .mine__button {
+        background: #111c29;
+        border: 1px solid #19293b;
+    }
+
+.light-theme .mine__button:hover {
+    background: #243B55;
+    color: white;
+    transition: 0.1s linear;
+}
+
+.dark-theme .main__films {
+    border: 1px solid #313131;
+}
+
+.dark-theme .user__menu {
+    border: 1px solid #313131;
+}
+
+.dark-theme .user__name {
+    color: #c8c8c8;
+}
+
+.dark-theme .new__films {
+    border: 1px solid #313131;
+}
+
+.dark-theme .main__view-film {
+    border: 1px solid #313131;
+}
+
+.dark-theme .header {
+    background-color: #111c29;
+}
+
+.dark-theme .footer {
+    background-color: #111c29;
+}
+
+.dark-theme .film__poster {
+    background: #111c29;
+}
+
+.dark-theme .menu__name {
+    border: 1px solid #313131;
+}
+
+.dark-theme .post__films {
+    background-color: #111c29;
+    border: 1px solid #19293b;
+}
+
+.dark-theme .main__poster {
+    border: 1px solid #19293b;
+}
+
+.dark-theme .block__films {
+    background-color: #111c29;
+    border: 1px solid #19293b;
+}
+
+.dark-theme .best__films {
+    background-color: #111c29;
+    border: 1px solid #19293b;
+}
+
+.dark-theme .button__film-post {
+    background-color: #111c29;
+    border: 1px solid #19293b;
+    color: #c8c8c8;
+}
+
+    .dark-theme .button__film-post:hover {
+        background: #19293b;
+        border: 1px solid #19293b;
+        color: #FFFFFF;
+        transition: 0.1s linear;
+    }
+
+.dark-theme .poster__film {
+    border: 1px solid #19293b;
+}
+
+.dark-theme .name__film {
+    color: #c8c8c8;
+}
+
+.dark-theme .post__name {
+    color: #c8c8c8;
+}
+
+.dark-theme .nav__link {
+    color: #c8c8c8;
+}
+
+    .dark-theme .nav__link:hover {
+        border-bottom: 2px solid #c8c8c8;
+    }
+
+.dark-theme .menu__text {
+    color: #c8c8c8;
+    background-color: #19293b;
+}
+
+.dark-theme .all_genres {
+    border: 1px solid #313131;
+}
+
+.dark-theme .name__genre {
+    color: #c8c8c8;
+}
+
+.dark-theme .info__sub {
+    color: #c8c8c8;
+}
+
+.dark-theme .extended__search {
+    color: #c8c8c8;
+}
+
+.dark-theme input {
+    background-color: #19293b;
+    color: #c8c8c8;
+}
+
+.dark-theme .search {
+    border: 1px solid #19293b;
+}
+
+.dark-theme .button__search {
+    background: #19293b;
+    border: 1px solid #19293b;
+}
+
+.dark-theme .button__admin-panel {
+    background-color: #111c29;
+    border: 1px solid #19293b;
+    color: #c8c8c8;
+}
+
+    .dark-theme .button__admin-panel:hover {
+        background: #19293b;
+        border: 1px solid #19293b;
+        color: #FFFFFF;
+        transition: 0.1s linear;
+    }
+
+.dark-theme .svg__favourite {
+    fill: #D9970B;
+}
+
+.dark-theme .svg__search {
+    stroke: #c8c8c8;
+}
+
+.dark-theme .film__description {
+    background: #111c29;
+}
+
+.dark-theme .description {
+    color: #c8c8c8;
+}
+
+.dark-theme .description__text {
+    color: #c8c8c8;
+}
+
+.dark-theme .film__name {
+    color: #c8c8c8;
+}
+
+.dark-theme .film__rating {
+    background-color: #111c29;
+}
+
+.dark-theme .film__play {
+    background: #111c29;
+}
+
+.dark-theme .film__recommend {
+    background: #111c29;
+}
+
+.dark-theme .film__comments {
+    background: #111c29;
+}
+
+.dark-theme .film__about-style {
+    color: #c8c8c8;
+}
+
+.dark-theme .rating__sait {
+    color: #c8c8c8;
+}
+
+    .dark-theme .rating__sait:after {
+        background-color: #c8c8c8;
+    }
+
+.dark-theme .rating__kinopoisk {
+    color: #c8c8c8;
+}
+
+.dark-theme .rating__imdb {
+    color: #c8c8c8;
+    border-left: 1px solid #243B55;
+}
+
+.dark-theme .button__use {
+    background: #111c29;
+    border: 1px solid #19293b;
+    color: #c8c8c8;
+}
+
+    .dark-theme .button__use:hover {
+        background: #243B55;
+        color: white;
+        transition: 0.1s linear;
+    }
+
+.dark-theme .login__password {
+    display: flex;
+}
+
+.dark-theme .main__common-block {
+    border: 1px solid #19293b;
+    background-color: #18171C;
+}
+
+.dark-theme .mine__form {
+    color: #c8c8c8;
+}
+
+/*Profile*/
+.dark-theme .main__profile {
+    border: 1px solid #19293b;
+    background-color: #18171C;
+}
+
+.dark-theme .text__profile {
+    color: #c8c8c8;
+}
+
+.dark-theme .profile__border {
+    border-bottom: 2px solid #19293b;
+}
+
+/*Add film*/
+.dark-theme .main__addFilm {
+    border: 1px solid #19293b;
+    background-color: #18171C;
+}
+
+/* Modal window */
+.light-theme .modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    opacity: 0;
+    -webkit-transition: opacity 400ms ease-in;
+    -moz-transition: opacity 400ms ease-in;
+    transition: opacity 400ms ease-in;
+    pointer-events: none;
+}
+
+    .light-theme .modal:target {
+        opacity: 1;
+        pointer-events: auto;
+        overflow-y: auto;
+    }
+
+.light-theme .modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 10px;
+}
+
+@media (min-width: 576px) {
+    .light-theme .modal-dialog {
+        max-width: 595px;
+        margin: 0 auto;
+    }
+}
+
+.light-theme .modal-content {
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: .3rem;
+    outline: 0;
+}
+
+@media (min-width: 768px) {
+    .light-theme .modal-content {
+        -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    }
+}
+
+.light-theme .modal-header {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #C7C7C7;
+}
+
+.light-theme .modal-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.light-theme .close {
+    float: right;
+    font-family: sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    text-decoration: none;
+}
+
+    .light-theme .close:focus,
+    .light-theme .close:hover {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+        opacity: .75;
+    }
+
+.light-theme .modal-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 15px;
+    overflow: auto;
+}
+
+/* Modal window dark theme */
+.dark-theme .modal-content {
+    background-color: #18171C;
+}
+
+.dark-theme .modal-header {
+    border-bottom: 1px solid #19293b;
+}
+
+.dark-theme .close {
+    color: #19293b;
+    text-shadow: 0 1px 0 #c8c8c8;
+}
+
+    .dark-theme .close:focus,
+    .dark-theme .close:hover {
+        color: #c8c8c8;
+        text-shadow: 0 1px 0 #19293b;
+    }
+
+.select__add {
+    width: 340px;
+}
+
+@media (max-width: 1200px) {
+    .container {
+        max-width: 1100px;
+    }
+
+    .light-theme .main__films {
+        width: 825px;
+    }
+
+    .light-theme .post__films {
+        width: 200px;
+        height: 360px;
+    }
+
+    .light-theme .rating:not(:checked) > label {
+        width: 20px;
+        font-size: 20px;
+    }
+
+    .light-theme .rating {
+        width: 100%;
+        margin-bottom: 0px;
+    }
+
+    .light-theme .main__view-film {
+        width: 825px;
+    }
+
+    .light-theme .film__rating {
+        width: 100%;
+    }
+
+    .film__line {
+        width: 450px;
+    }
+
+    .light-theme .main__addFilm {
+        width: 825px;
+    }
+
+    .light-theme .main__search {
+        width: 825px;
+    }
+
+    .light-theme .main__common-block {
+        width: 825px;
+    }
+
+    .light-theme .main__profile {
+        width: 825px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .container {
+        max-width: 1000px;
+    }
+
+    .light-theme .main__films {
+        width: 760px;
+    }
+
+    .light-theme .post__films {
+        width: 187px;
+        height: 336px;
+    }
+
+    .light-theme .rating:not(:checked) > label {
+        width: 20px;
+        font-size: 20px;
+    }
+
+    .light-theme .rating {
+        width: 100%;
+        margin-bottom: 0px;
+    }
+
+    .light-theme .main__view-film {
+        width: 760px;
+    }
+
+    .light-theme .film__rating {
+        width: 100%;
+    }
+
+    .film__line {
+        width: 370px;
+    }
+
+    .light-theme .main__addFilm {
+        width: 760px;
+    }
+
+    .light-theme .main__search {
+        width: 760px;
+    }
+
+    .light-theme .main__common-block {
+        width: 760px;
+    }
+
+    .light-theme .main__profile {
+        width: 760px;
+    }
+
+    .light-theme .block__films {
+        width: 135px;
+        height: 240px;
+    }
+
+    .rating__world {
+        display: block;
+    }
+
+    .light-theme .rating__sait:after {
+        width: 280px;
+    }
+
+    .light-theme .rating__imdb {
+        border-left: none;
+    }
+
+    .light-theme .film__poster {
+        width: 280px;
+        height: 410px;
+    }
+
+    .view__poster {
+        width: 260px;
+    }
+
+    .film__data {
+        width: 470px;
+    }
+
+    .light-theme .menu__name {
+        width: 235px;
+    }
+
+    .light-theme .all_genres {
+        width: 235px;
+        padding: 5px;
+    }
+
+    .light-theme .genre__block-link {
+        width: 110px;
+    }
+
+    .light-theme .best__films {
+        width: 120px;
+    }
+
+    .recommend__film {
+        height: 174px;
+    }
+
+    .light-theme .main__poster {
+        height: 275px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .container {
+        max-width: 768px;
+    }
+
+    .light-theme .main__films {
+        width: 575px;
+    }
+
+    .light-theme .post__films {
+        width: 187px;
+        height: 336px;
+    }
+
+    .light-theme .rating:not(:checked) > label {
+        width: 20px;
+        font-size: 20px;
+    }
+
+    .light-theme .rating {
+        width: 100%;
+        margin-bottom: 0px;
+    }
+
+    .light-theme .main__view-film {
+        width: 575px;
+    }
+
+    .light-theme .film__rating {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .film__line {
+        width: 320px;
+    }
+
+    .light-theme .main__addFilm {
+        width: 575px;
+        padding: 5px;
+    }
+
+    .light-theme .main__search {
+        width: 575px;
+    }
+
+    .light-theme .main__common-block {
+        width: 575px;
+        padding: 20px;
+    }
+
+    .light-theme .main__profile {
+        width: 575px;
+    }
+
+    .light-theme .block__films {
+        width: 105px;
+        height: 195px;
+    }
+
+    .rating__world {
+        display: flex;
+        justify-content: space-between;
+        width: 559px;
+    }
+
+    .light-theme .rating__sait:after {
+        width: 280px;
+        content: none;
+    }
+
+    .light-theme .rating__imdb {
+        border-left: none;
+    }
+
+    .light-theme .film__poster {
+        width: 230px;
+        height: 360px;
+        padding: 8px;
+        margin: 0;
+    }
+
+    .view__poster {
+        width: 210px;
+    }
+
+    .film__data {
+        width: 330px;
+    }
+
+    .light-theme .menu__name {
+        width: 175px;
+    }
+
+    .light-theme .all_genres {
+        width: 175px;
+        padding: 5px;
+    }
+
+    .light-theme .genre__block-link {
+        width: 100%;
+    }
+
+    .light-theme .best__films {
+        width: 92px;
+        height: 170px;
+    }
+
+    .recommend__film {
+        height: 128px;
+    }
+
+    .light-theme .main__poster {
+        height: 275px;
+    }
+
+    .light-theme .new__films {
+        padding: 0;
+    }
+
+    .light-theme .film__about-style {
+        width: 190px;
+    }
+
+    .light-theme .poster__film {
+        height: 150px;
+    }
+
+    .light-theme .search {
+        width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 480px;
+    }
+
+    .light-theme .main__films {
+        width: 480px;
+        justify-content: center;
+    }
+
+    .light-theme .post__films {
+        width: 187px;
+        height: 336px;
+    }
+
+    .light-theme .rating:not(:checked) > label {
+        width: 20px;
+        font-size: 20px;
+    }
+
+    .light-theme .rating {
+        width: 100%;
+        margin-bottom: 0px;
+    }
+
+    .light-theme .main__view-film {
+        width: 465px;
+    }
+
+    .light-theme .film__rating {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .film__line {
+        width: 210px;
+    }
+
+    .light-theme .main__addFilm {
+        width: 465px;
+        padding: 5px;
+    }
+
+    .light-theme .main__search {
+        width: 575px;
+    }
+
+    .light-theme .main__common-block {
+        width: 480px;
+        padding: 8px;
+        align-items: center;
+    }
+
+    .light-theme .main__profile {
+        width: 480px;
+        padding: 20px;
+    }
+
+    .light-theme .block__films {
+        width: 105px;
+        height: 195px;
+    }
+
+    .rating__world {
+        display: flex;
+        justify-content: space-between;
+        width: 440px;
+    }
+
+    .light-theme .rating__sait:after {
+        width: 280px;
+        content: none;
+    }
+
+    .light-theme .rating__imdb {
+        border-left: none;
+        font-size: 18px;
+    }
+
+    .light-theme .film__poster {
+        width: 190px;
+        height: 320px;
+        padding: 8px;
+        margin: 0;
+    }
+
+    .view__poster {
+        width: 170px;
+    }
+
+    .film__data {
+        width: 330px;
+    }
+
+    .light-theme .menu__name {
+        display: none;
+        width: 175px;
+    }
+
+    .light-theme .all_genres {
+        width: 480px;
+        padding: 5px;
+    }
+
+    .light-theme .genre__block-link {
+        width: 120px;
+    }
+
+    .light-theme .best__films {
+        width: 92px;
+        height: 170px;
+    }
+
+    .recommend__film {
+        height: 128px;
+    }
+
+    .light-theme .main__poster {
+        height: 275px;
+    }
+
+    .light-theme .new__films {
+        padding: 0;
+        display: none;
+    }
+
+    .light-theme .film__about-style {
+        width: 120px;
+        font-size: 16px;
+    }
+
+    .light-theme .poster__film {
+        height: 150px;
+    }
+
+    .light-theme .search {
+        width: 170px;
+    }
+
+    .header__logo {
+        font-size: 24px;
+    }
+
+    .header__menu {
+        height: 40px;
+    }
+
+    .light-theme .nav__link {
+        font-size: 16px;
+    }
+
+    .main__block {
+        flex-flow: column-reverse;
+    }
+
+    .registration__block {
+        display: block;
+        height: 50px;
+    }
+
+    .light-theme .mine__input {
+        width: 200px;
+    }
+
+    .select__add {
+        width: 220px;
+    }
+
+    .light-theme .film__name {
+        font-size: 28px;
+    }
+
+    .light-theme .rating__star {
+        width: 390px;
+    }
+
+    .light-theme .rating__kinopoisk {
+        font-size: 18px;
+    }
+
+    .light-theme .rating__sait {
+        font-size: 18px;
+    }
+
+    .data__size {
+        justify-content: normal;
+    }
+
+    .recommend-style {
+        display: none;
+    }
+
+    .light-theme .user__menu {
+        flex-wrap: wrap;
+        height: 80px;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,99 @@
+﻿@model FilmCreateRequest
+@{
+    ViewData["Title"] = "Добавление фильма";
+}
+
+<div class="main__addFilm">
+    <form asp-controller="Film" asp-action="AddFilms" method="post" enctype="multipart/form-data">
+        <div class="addFilm__block">
+            <label asp-for="NameFilms" class="mine__form">Название Фильма:</label>
+            <input type="text" asp-for="NameFilms" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="ReleaseDate" class="mine__form">Год:</label>
+            <input type="number" asp-for="ReleaseDate" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="RatingSite" class="mine__form">Рейтинг сайта:</label>
+            <input type="text" asp-for="RatingSite" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="IdRating" class="mine__form">Ид рейтинга кинопоиска:</label>
+            <input type="number" asp-for="IdRating" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="LinkFilmtrailer" class="mine__form">Ссылка на трейлер(YouTube):</label>
+            <input type="text" asp-for="LinkFilmtrailer" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="AgeLimit" class="mine__form">Возрастное ограничение:</label>
+            <input type="number" asp-for="AgeLimit" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="Description" class="mine__form">Описание:</label>
+            <input type="text" asp-for="Description" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="Time" class="mine__form">Время:</label>
+            <input type="number" asp-for="Time" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="CountryIds" class="mine__form">Страны:</label>
+            <div class="block-list list-country" id="id__country">
+                <select asp-for="CountryIds" class="select__add" asp-items="ViewBag.AddCountry" multiple size="15">
+                </select>
+            </div>
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="ActorIds" class="mine__form">Актеры:</label>
+            <div class="block-list list-actor">
+                <select asp-for="ActorIds" class="select__add" multiple size="15">
+                    @foreach (var item in ViewBag.AddActor)
+                    {
+                        <option value="@item.Id">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="GenreIds" class="mine__form">Жанры:</label>
+            <div class="block-list list-genre">
+                <select asp-for="GenreIds" class="select__add" asp-items="ViewBag.AddGenres" multiple size="15">
+                </select>
+            </div>
+        </div>
+        <div class="addFilm__block">
+            <label asp-for="StageManagerIds" class="mine__form">Режиссер:</label>
+            <select asp-for="StageManagerIds" class="select__add" asp-items="ViewBag.AddManager" multiple size="15">
+            </select>
+        </div>
+        <div class="addFilm__block">
+            <label class="mine__form">Постер:</label>
+            <input type="file" name="uploadedFile" class="mine__input" />
+        </div>
+        <div class="addFilm__block">
+            <input type="submit" value="Добавить" class="mine__button" />
+        </div>
+    </form>
+
+    <div id="openModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Название</h3>
+                    <a href="#close" title="Close" class="close">×</a>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Film" asp-action="AddFilms" method="post">
+                        <label asp-for="GenreIds" for="country">Выберите жанр:</label>
+                        <select asp-for="GenreIds" class="select__add" asp-items="ViewBag.Companies" multiple size="15">
+                        </select>
+                        <input type="submit" value="Save" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Script/AddInput.js"></script>

@@ -1,0 +1,26 @@
+﻿@model FilmOnline.Web.ViewModels.CountryViewModel
+@{
+    ViewData["Title"] = "Добавление страны";
+}
+
+<div class="main__addFilm">
+    @foreach (var item in Model.CountryModelResponses)
+    {
+        <form asp-action="DeleteCountries" asp-route-id="@item.Id" method="post">
+            <div class="item__view-block">
+                <div class="item__view">@item.Country</div>
+                <input class="button__film-post" type="submit" value="Delete" />
+            </div>
+        </form>
+    }
+
+    <form asp-controller="Film" asp-action="AddCount" method="post">
+        <div class="registration__block">
+            <label asp-for="Country" class="mine__form">Страна:</label>
+            <input type="text" asp-for="Country" class="mine__input" />
+        </div>
+        <div class="registration__block">
+            <input type="submit" value="Добавить" class="mine__button" />
+        </div>
+    </form>
+</div>

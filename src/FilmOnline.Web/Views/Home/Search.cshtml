@@ -1,0 +1,100 @@
+﻿@model FilmShortModelResponse
+
+@{
+    ViewData["Title"] = "Поиск";
+}
+
+<main class="main__search" role="main">
+    @if (Model.Id == 0)
+    {
+        <div class="search__main">
+            <h1>Ничего не найдено, попробуй еще!</h1>
+            <form asp-controller="Home" asp-action="Search" method="get" class="search__button">
+                <input name="name" type="text" class="search" placeholder="В чем дело, Док?">
+                <button type="submit" class="button__search">
+                    <svg class="svg__search" width="17" height="17" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.7071 14.2929L22.7071 22.2929M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke-width="2" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <form asp-action="Search" asp-controller="Home" asp-route-id="@Model.NameFilms">
+            <div class="post__films">
+                <a asp-action="Index" asp-controller="Film" asp-route-id="@Model.Id"><img src="@Url.Content(Model.PathPoster)" width="214px" height="300px" class="main__poster" alt=""></a>
+
+                <div class="rating">
+                    <input type="radio" id="star-1" name="rating" value="1">
+                    <label for="star-1" title="Оценка «1»"></label>
+                    <input type="radio" id="star-2" name="rating" value="2">
+                    <label for="star-2" title="Оценка «2»"></label>
+                    <input type="radio" id="star-3" name="rating" value="3">
+                    <label for="star-3" title="Оценка «3»"></label>
+                    <input type="radio" id="star-4" name="rating" value="4">
+                    <label for="star-4" title="Оценка «4»"></label>
+                    <input type="radio" id="star-5" name="rating" value="5">
+                    <label for="star-5" title="Оценка «5»"></label>
+                    <input type="radio" id="star-6" name="rating" value="1">
+                    <label for="star-1" title="Оценка «6»"></label>
+                    <input type="radio" id="star-7" name="rating" value="1">
+                    <label for="star-1" title="Оценка «7»"></label>
+                    <input type="radio" id="star-8" name="rating" value="1">
+                    <label for="star-1" title="Оценка «8»"></label>
+                    <input type="radio" id="star-9" name="rating" value="1">
+                    <label for="star-1" title="Оценка «9»"></label>
+                    <input type="radio" id="star-10" name="rating" value="1">
+                    <label for="star-1" title="Оценка «10»"></label>
+                </div>
+                <div class="post__name-block">
+                    <div class="post__name">@Model.NameFilms:@Model.ReleaseDate</div>
+                </div>
+            </div>
+        </form>
+    }
+</main>
+
+@*@model IEnumerable<FilmShortModelResponse>
+
+    <main class="main__films" role="main">
+        @if (Model is null)
+        {
+            <h1>Что будем искать?</h1>
+        }
+
+        @foreach (var film in Model)
+        {
+            <form asp-action="Search" asp-controller="Home" asp-route-id="@film.NameFilms">
+                <div class="post__films">
+                    <a asp-action="Index" asp-controller="Film" asp-route-id="@film.Id"><img src="@Url.Content(film.PathPoster)" width="214px" height="300px" class="main__poster" alt=""></a>
+
+                    <div class="rating">
+                        <input type="radio" id="star-1" name="rating" value="1">
+                        <label for="star-1" title="Оценка «1»"></label>
+                        <input type="radio" id="star-2" name="rating" value="2">
+                        <label for="star-2" title="Оценка «2»"></label>
+                        <input type="radio" id="star-3" name="rating" value="3">
+                        <label for="star-3" title="Оценка «3»"></label>
+                        <input type="radio" id="star-4" name="rating" value="4">
+                        <label for="star-4" title="Оценка «4»"></label>
+                        <input type="radio" id="star-5" name="rating" value="5">
+                        <label for="star-5" title="Оценка «5»"></label>
+                        <input type="radio" id="star-6" name="rating" value="1">
+                        <label for="star-1" title="Оценка «6»"></label>
+                        <input type="radio" id="star-7" name="rating" value="1">
+                        <label for="star-1" title="Оценка «7»"></label>
+                        <input type="radio" id="star-8" name="rating" value="1">
+                        <label for="star-1" title="Оценка «8»"></label>
+                        <input type="radio" id="star-9" name="rating" value="1">
+                        <label for="star-1" title="Оценка «9»"></label>
+                        <input type="radio" id="star-10" name="rating" value="1">
+                        <label for="star-1" title="Оценка «10»"></label>
+                    </div>
+                    <div class="post__name-block">
+                        <div class="post__name">@film.NameFilms:@film.ReleaseDate</div>
+                    </div>
+                </div>
+            </form>
+        }
+    </main>*@

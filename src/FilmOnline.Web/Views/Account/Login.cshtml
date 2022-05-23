@@ -1,0 +1,27 @@
+﻿@model UserLoginRequest
+
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<main class="main__common-block">
+    <h2>Вход в приложение</h2>
+    <form method="post" asp-controller="Account" asp-action="Login" asp-antiforgery="true">
+        <div asp-validation-summary="All"></div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="Email"></label><br />
+            <input class="mine__input" asp-for="Email" />
+        </div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="Password"></label><br />
+            <input class="mine__input" asp-for="Password" />
+        </div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="RememberMe"></label><br />
+            <input class="mine__input" asp-for="RememberMe" />
+        </div>
+        <div>
+            <input class="mine__button" type="submit" value="Войти" />
+        </div>
+    </form>
+</main>

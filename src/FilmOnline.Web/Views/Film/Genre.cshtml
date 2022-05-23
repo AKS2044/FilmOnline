@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FilmShortModelResponse>
+@{
+    ViewData["Title"] = ViewBag.Genre;
+}
+
+<main class="main__films" role="main">
+    @foreach (var film in Model)
+    {
+        <form asp-action="Index" asp-controller="Film" asp-route-id="@film.Id">
+            <div class="post__films">
+                <a asp-action="Index" asp-controller="Film" asp-route-id="@film.Id"><img src="@Url.Content(film.PathPoster)" width="214px" height="300px" class="main__poster" alt=""></a>
+
+                <div class="rating">
+                    <input type="radio" id="star-1" name="rating" value="1">
+                    <label for="star-1" title="Оценка «1»"></label>
+                    <input type="radio" id="star-2" name="rating" value="2">
+                    <label for="star-2" title="Оценка «2»"></label>
+                    <input type="radio" id="star-3" name="rating" value="3">
+                    <label for="star-3" title="Оценка «3»"></label>
+                    <input type="radio" id="star-4" name="rating" value="4">
+                    <label for="star-4" title="Оценка «4»"></label>
+                    <input type="radio" id="star-5" name="rating" value="5">
+                    <label for="star-5" title="Оценка «5»"></label>
+                    <input type="radio" id="star-6" name="rating" value="1">
+                    <label for="star-1" title="Оценка «6»"></label>
+                    <input type="radio" id="star-7" name="rating" value="1">
+                    <label for="star-1" title="Оценка «7»"></label>
+                    <input type="radio" id="star-8" name="rating" value="1">
+                    <label for="star-1" title="Оценка «8»"></label>
+                    <input type="radio" id="star-9" name="rating" value="1">
+                    <label for="star-1" title="Оценка «9»"></label>
+                    <input type="radio" id="star-10" name="rating" value="1">
+                    <label for="star-1" title="Оценка «10»"></label>
+                </div>
+                <div class="post__name-block">
+                    <div class="post__name">@film.NameFilms:@film.ReleaseDate</div>
+                </div>
+            </div>
+        </form>
+    }
+</main>

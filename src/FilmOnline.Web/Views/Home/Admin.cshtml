@@ -1,0 +1,59 @@
+﻿@model IEnumerable<FilmShortModelResponse>
+
+<main class="admin__main">
+    <div class="admin__control">
+        <h3>Управление фильмами</h3>
+        <a asp-controller="Film" asp-action="AddFilms"><div class="button__admin-panel">Добавить фильм</div></a>
+        <a asp-controller="Film" asp-action="AddCount"><div class="button__admin-panel">Добавить страну</div></a>
+        <a href="#deleteFilm"><div class="button__admin-panel">Удалить фильм</div></a>
+        <a href="#upgradeFilm"><div class="button__admin-panel">Редактировать фильм</div></a>
+    </div>
+
+    <div class="admin__control">
+        <h3>Управление пользователями</h3>
+        <a href=""><div class="button__admin-panel">Добавить пользователя</div></a>
+        <a asp-controller="Account" asp-action="DeleteUser"><div class="button__admin-panel">Удалить пользователя</div></a>
+        <a><div class="button__admin-panel">Редактировать пользователя</div></a>
+        <a href=""><div class="button__admin-panel">Изменить роль пользователя</div></a>
+    </div>
+</main>
+
+<div id="deleteFilm" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Удалить фильм</h3>
+                <a href="#close" title="Close" class="close">×</a>
+            </div>
+            <div class="modal-body">
+                @foreach (var item in Model)
+                {
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                        @item.NameFilms
+                        <input type="submit" value="Delete" />
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="upgradeFilm" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Удалить фильм</h3>
+                <a href="#close" title="Close" class="close">×</a>
+            </div>
+            <div class="modal-body">
+                @foreach (var item in Model)
+                {
+                    <form asp-action="Upgrade" asp-controller="Film" asp-route-id="@item.Id" method="get">
+                        @item.NameFilms
+                        <input type="submit" value="Save" />
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+﻿@model UserRegistationRequest
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<main class="main__common-block">
+    <h2>Регистрация на сайте</h2>
+    <form class="register__form" method="post" asp-controller="Account" asp-action="Register">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="Email"></label><br />
+            <input class="mine__input" asp-for="Email" />
+        </div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="UserName"></label><br />
+            <input class="mine__input" asp-for="UserName" />
+        </div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="Password"></label><br />
+            <input class="mine__input" asp-for="Password" />
+        </div>
+        <div class="registration__block">
+            <label class="mine__form" asp-for="PasswordConfirm"></label><br />
+            <input class="mine__input" asp-for="PasswordConfirm" />
+        </div>
+        <div>
+            <input class="mine__button" type="submit" value="Регистрация" />
+        </div>
+    </form>
+</main>
