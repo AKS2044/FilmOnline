@@ -111,7 +111,7 @@ namespace FilmOnline.WebApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CourseProject.WebApi3 v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FilmOnline.WebApi v1"));
             }
 
             app.UseMiddleware<ErrorHandlerMiddleware>();

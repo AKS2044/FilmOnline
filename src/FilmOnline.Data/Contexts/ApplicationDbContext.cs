@@ -103,7 +103,7 @@ namespace FilmOnline.Data.Contexts
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=FilmData;Trusted_Connection=True;");
+        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=FilmOnline;Trusted_Connection=True;");
         //}
     }
 }
