@@ -142,6 +142,26 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(userResponses);
         }
 
+        [HttpGet("getToken")]
+        public async Task<IActionResult> GetTokenAsync(UserLoginRequest model)
+        {
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { message = "Неправильный логин и (или) пароль" });
+            }
+            else
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                var token = _jwtService.GenerateJwtToken(user.Id, _appSettings.Secret);
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var response = new AuthenticateResponse(user, token, userRoles);
+                return Ok(response);
+            }
+           
+        }
+
         [HttpDelete("DeleteUser{id}")]
         public async Task<IActionResult> DeleteUsersAsync(string id)
         {

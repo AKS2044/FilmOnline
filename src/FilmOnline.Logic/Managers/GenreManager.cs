@@ -91,9 +91,15 @@ namespace FilmOnline.Logic.Managers
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(GenreDto model)
+        public async Task UpdateAsync(GenreDto genreDto)
         {
-            throw new NotImplementedException();
+            var genre = await _genreRepository.GetEntityAsync(c => c.Id == genreDto.Id);
+
+            if (genreDto.Genres != genre.Genres)
+            {
+                genre.Genres = genreDto.Genres;
+            }
+            await _genreRepository.SaveChangesAsync();
         }
     }
 }

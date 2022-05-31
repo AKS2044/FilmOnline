@@ -19,5 +19,10 @@
         /// Email.
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// Role.
+        /// </summary>
+        public string Role { get; set; }
     }
 }

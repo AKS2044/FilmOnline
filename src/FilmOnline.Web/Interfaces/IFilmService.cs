@@ -18,25 +18,11 @@ namespace FilmOnline.Web.Interfaces
         Task AddAsync(object value, string token);
 
         /// <summary>
-        /// Add country.
-        /// </summary>
-        /// <param name="value">Object.</param>
-        /// <param name="token">Jwt token.</param>
-        Task AddCountryAsync(string value, string token);
-
-        /// <summary>
         /// Delete film.
         /// </summary>
         /// <param name="id">id.</param>
         /// <param name="token">Jwt token.</param>
         Task DeleteFilmAsync(int id, string token);
-
-        /// <summary>
-        /// Delete country.
-        /// </summary>
-        /// <param name="id">id.</param>
-        /// <param name="token">Jwt token.</param>
-        Task DeleteCountryAsync(int id, string token);
 
         /// <summary>
         /// Get all short information films.
@@ -49,12 +35,6 @@ namespace FilmOnline.Web.Interfaces
         /// </summary>
         /// <returns>Genre collection.</returns>
         Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync();
-
-        /// <summary>
-        /// Get all country.
-        /// </summary>
-        /// <returns>Country collection.</returns>
-        Task<IEnumerable<CountryModelResponse>> GetAllCountryAsync();
 
         /// <summary>
         /// Get all actor.

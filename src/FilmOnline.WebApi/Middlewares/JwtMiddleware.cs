@@ -80,11 +80,13 @@ namespace FilmOnline.WebApi.Middlewares
                 var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
 
                 var user = await userManager.FindByIdAsync(userId);
+                var role = await userManager.GetRolesAsync(user);
                 var userModel = new UserModel
                 {
                     Id = user.Id,
                     UserName = user.UserName,
-                    Email = user.Email
+                    Email = user.Email,
+                    Role = role.First()
                 };
 
                 context.Items["User"] = userModel;

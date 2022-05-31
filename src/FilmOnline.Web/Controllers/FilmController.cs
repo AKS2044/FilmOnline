@@ -21,16 +21,18 @@ namespace FilmOnline.Web.Controllers
     {
         public readonly IWebHostEnvironment _appEnvironment;
         private readonly IFilmService _filmService;
+        private readonly ICountryService _countryService;
 
         /// <summary>
         /// Constructor with params.
         /// </summary>
         /// <param name="filmService">Film Service.</param>
         /// <param name="appEnvironment">App Environment.</param>
-        public FilmController(IWebHostEnvironment appEnvironment, IFilmService filmService)
+        public FilmController(IWebHostEnvironment appEnvironment, IFilmService filmService, ICountryService countryService)
         {
             _appEnvironment = appEnvironment ?? throw new ArgumentNullException(nameof(appEnvironment));
             _filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
+            _countryService = countryService ?? throw new ArgumentNullException(nameof(countryService));
         }
 
         /// <summary>
@@ -59,9 +61,11 @@ namespace FilmOnline.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddFilms()
         {
+            var token = User.FindFirst(ClaimTypes.CookiePath).Value;
+
             var filmCollection = await _filmService.GetAllShortAsync();
             var genreCollection = await _filmService.GetAllGenreAsync();
-            var countryCollection = await _filmService.GetAllCountryAsync();
+            var countryCollection = await _countryService.GetAllCountryAsync(token);
             var actorsCollection = await _filmService.GetAllActorAsync();
             var stageManagersCollection = await _filmService.GetAllStageManagerAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
@@ -114,40 +118,43 @@ namespace FilmOnline.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        
+
         /// <summary>
-        /// Add country view.
+        /// Add genre view.
         /// </summary>
-        public async Task<IActionResult> AddCount()
+        public async Task<IActionResult> AddGenre()
         {
+            var token = User.FindFirst(ClaimTypes.CookiePath).Value;
+
             var filmCollection = await _filmService.GetAllShortAsync();
             var genreCollection = await _filmService.GetAllGenreAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
-            var countryCollection = await _filmService.GetAllCountryAsync();
+            var countryCollection = await _countryService.GetAllCountryAsync(token);
 
             ViewBag.RandomFilm = resultRandomFilm.Id;
             ViewBag.Genres = genreCollection;
             ViewBag.Films = filmCollection.Take(7);
             ViewBag.AllCountry = countryCollection;
 
-            CountryViewModel test = new()
+            CountryViewModel response = new()
             {
                 CountryModelResponses = countryCollection,
             };
 
-            return View(test);
+            return View(response);
         }
 
         /// <summary>
-        /// Add country(Post).
-        /// <param name="request">Country request.</param>
+        /// Add genre(Post).
+        /// <param name="request">genre request.</param>
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> AddCount(CountryViewModel request)
+        public async Task<IActionResult> AddGenre(CountryViewModel request)
         {
-            request = request ?? throw new ArgumentNullException(nameof(request));
 
             var token = User.FindFirst(ClaimTypes.CookiePath).Value;
-            await _filmService.AddCountryAsync(request.Country, token);
+            await _countryService.AddCountryAsync(request.Country, token);
 
             return RedirectToAction("Admin", "Home");
         }
@@ -184,9 +191,11 @@ namespace FilmOnline.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Upgrade(int id)
         {
+            var token = User.FindFirst(ClaimTypes.CookiePath).Value;
+
             var filmCollection = await _filmService.GetAllShortAsync();
             var genreCollection = await _filmService.GetAllGenreAsync();
-            var countryCollection = await _filmService.GetAllCountryAsync();
+            var countryCollection = await _countryService.GetAllCountryAsync(token);
             var actorsCollection = await _filmService.GetAllActorAsync();
             var stageManagersCollection = await _filmService.GetAllStageManagerAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
@@ -202,17 +211,6 @@ namespace FilmOnline.Web.Controllers
             var result = await _filmService.GetByIdUpgradeAsync(id);
 
             return View(result);
-        }
-
-        /// <summary>
-        /// Delete country (Post).
-        /// </summary>
-        [HttpPost]
-        public async Task<IActionResult> DeleteCountries(int id)
-        {
-            var token = User.FindFirst(ClaimTypes.CookiePath).Value;
-            await _filmService.DeleteCountryAsync(id, token);
-            return RedirectToAction("Admin", "Home");
         }
     }
 }

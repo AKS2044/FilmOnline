@@ -1,6 +1,7 @@
 ﻿using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
+using FilmOnline.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace FilmOnline.WebApi.Controllers
             _genreManager = genreManager ?? throw new ArgumentNullException(nameof(genreManager));
         }
 
+        [OwnAuthorize]
         [HttpPost("addGenre")]
         public async Task<IActionResult> CreateAsync([FromBody] GenreCreateRequest request)
         {
@@ -42,10 +44,23 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(genres);
         }
 
+        [OwnAuthorize]
         [HttpDelete("{id}")]
         public async Task DeleteAsync(int id)
         {
             await _genreManager.DeleteAsync(id);
+        }
+
+        [OwnAuthorize]
+        [HttpPut("{id}")]
+        public async Task UpdateGenreAsync(GenreDto genreDto, int id)
+        {
+            GenreDto result = new()
+            {
+                Id = id,
+                Genres = genreDto.Genres
+            };
+            await _genreManager.UpdateAsync(result);
         }
     }
 }

@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmOnline.Web", "src\FilmO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmOnline.WebApi", "src\FilmOnline.WebApi\FilmOnline.WebApi.csproj", "{02493499-CC10-4693-82EA-9F40270D347D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmOnline.BlazorServer", "src\FilmOnline.BlazorServer\FilmOnline.BlazorServer.csproj", "{0A4EDA3D-8710-4273-8B2B-28D5A6E92746}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{02493499-CC10-4693-82EA-9F40270D347D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02493499-CC10-4693-82EA-9F40270D347D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02493499-CC10-4693-82EA-9F40270D347D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A4EDA3D-8710-4273-8B2B-28D5A6E92746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A4EDA3D-8710-4273-8B2B-28D5A6E92746}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A4EDA3D-8710-4273-8B2B-28D5A6E92746}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A4EDA3D-8710-4273-8B2B-28D5A6E92746}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

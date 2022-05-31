@@ -41,46 +41,9 @@ namespace FilmOnline.Web.Service
             }
         }
 
-        public async Task AddCountryAsync(string value, string token)
-        {
-            CountryCreateRequest model = new()
-            {
-                Country = value
-            };
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Country/addCountry")
-            {
-                Content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")
-            };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            using var response = await _httpClient.SendAsync(request);
-
-            // throw exception on error response
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                throw new Exception(error["message"]);
-            }
-        }
-
         public async Task DeleteFilmAsync(int id, string token)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/Film/DeleteFilm{id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            using var response = await _httpClient.SendAsync(request);
-
-            // throw exception on error response
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                throw new Exception(error["message"]);
-            }
-        }
-
-        public async Task DeleteCountryAsync(int id, string token)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/Country/{id}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             using var response = await _httpClient.SendAsync(request);
@@ -171,22 +134,6 @@ namespace FilmOnline.Web.Service
 
             var genres = await response.Content.ReadFromJsonAsync<List<GenreModelResponse>>();
             return genres;
-        }
-
-        public async Task<IEnumerable<CountryModelResponse>> GetAllCountryAsync()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/Country/allCountry");
-            using var response = await _httpClient.SendAsync(request);
-
-            // throw exception on error response
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                throw new Exception(error["message"]);
-            }
-
-            var countries = await response.Content.ReadFromJsonAsync<List<CountryModelResponse>>();
-            return countries;
         }
 
         public async Task<IEnumerable<ActorModelResponse>> GetAllActorAsync()

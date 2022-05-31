@@ -13,7 +13,7 @@ namespace FilmOnline.Logic.Interfaces
         /// <summary>
         /// Create state.
         /// </summary>
-        /// <param name="model">State data transfer object.</param>
+        /// <param name="stateDto">State data transfer object.</param>
         Task CreateAsync(StateDto stateDto);
 
         /// <summary>
@@ -25,7 +25,8 @@ namespace FilmOnline.Logic.Interfaces
         /// <summary>
         /// Update state by identifier.
         /// </summary>
-        /// <param name="model">State data transfer object.</param>
+        /// <param name="stateDto">State data transfer object.</param>
+        /// <param name="id">Identifier country.</param>
         Task UpdateAsync(StateDto stateDto);
 
         /// <summary>

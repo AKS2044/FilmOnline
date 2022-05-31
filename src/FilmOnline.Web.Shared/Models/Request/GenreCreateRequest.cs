@@ -5,7 +5,7 @@ namespace FilmOnline.Web.Shared.Models.Request
     public class GenreCreateRequest
     {
         /// <summary>
-        /// Genres.
+        /// Genre.
         /// </summary>
         [Required]
         public string Genres { get; set; }

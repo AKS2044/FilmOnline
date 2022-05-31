@@ -28,7 +28,9 @@ namespace FilmOnline.Web
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IFilmService, FilmService>();
-            services.AddScoped(x => new HttpClient() { BaseAddress = new Uri("https://localhost:44327") });//Change your port
+            services.AddScoped<ICountryService, CountryService>();
+            services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped(x => new HttpClient() { BaseAddress = new Uri("https://localhost:44369") });//Change your port
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }

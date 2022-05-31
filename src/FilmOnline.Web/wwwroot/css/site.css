@@ -811,13 +811,19 @@ a {
 .item__view {
     font-size: 18px;
     font-weight: 500;
+    width: 100px;
     line-height: 16px;
 }
 
 .item__view-block {
     display: flex;
-    width: 300px;
     justify-content: space-between;
+}
+
+.line {
+    border-top: 2px solid rgb(204, 204, 204, 0.54);
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* Dark theme */
@@ -1571,7 +1577,7 @@ a {
     }
 
     .light-theme .main__addFilm {
-        width: 465px;
+        width: 480px;
         padding: 5px;
     }
 

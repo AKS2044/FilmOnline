@@ -1,12 +1,14 @@
 ﻿using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
+using FilmOnline.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
 namespace FilmOnline.WebApi.Controllers
 {
+    [OwnAuthorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CountryController : ControllerBase
@@ -46,6 +48,17 @@ namespace FilmOnline.WebApi.Controllers
         public async Task DeleteAsync(int id)
         {
             await _countryManager.DeleteAsync(id);
+        }
+
+        [HttpPut("{id}")]
+        public async Task UpdateCountryAsync(StateDto stateDto, int id)
+        {
+            StateDto result = new()
+            {
+                Id = id,
+                Country = stateDto.Country
+            };
+            await _countryManager.UpdateAsync(result);
         }
     }
 }

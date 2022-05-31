@@ -16,30 +16,3 @@ $addCountry.addEventListener('click', function (event) {
     $input.innerHTML = inputCountry;
     $listCountry.insertBefore($input, $addCountry);
 });
-
-$addActor.addEventListener('click', function (event) {
-    var $input = document.createElement('div');
-    $input.classList.add('new-item');
-    var inputActor = '<input autofocus type="number" class="mine__input" data-val="true" data-val-required="The ActorIds field is required." id="ActorIds" name="ActorIds" value="">';
-
-    $input.innerHTML = inputActor;
-    $listActor.insertBefore($input, $addActor);
-});
-
-$addGenre.addEventListener('click', function (event) {
-    var $input = document.createElement('div');
-    $input.classList.add('new-item');
-    var inputGenre = '<input autofocus type="number" class="mine__input" data-val="true" data-val-required="The GenreIds field is required." id="GenreIds" name="GenreIds" value="">';
-
-    $input.innerHTML = inputGenre;
-    $listGenre.insertBefore($input, $addGenre);
-});
-
-$addManager.addEventListener('click', function (event) {
-    var $input = document.createElement('div');
-    $input.classList.add('new-item');
-    var inputManager = '<input autofocus type="number" class="mine__input" data-val="true" data-val-required="The StageManagerIds field is required." id="StageManagerIds" name="StageManagerIds" value="">';
-
-    $input.innerHTML = inputManager;
-    $listManager.insertBefore($input, $addManager);
-});

@@ -20,6 +20,12 @@ namespace FilmOnline.WebApi.Attributes
                 // not logged in
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
+
+            if (user.Role != "Admin")
+            {
+                // not logged in
+                context.Result = new JsonResult(new { message = "You are not admin" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            }
         }
     }
 }

@@ -91,9 +91,15 @@ namespace FilmOnline.Logic.Managers
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(StateDto stateDto)
+        public async Task UpdateAsync(StateDto stateDto)
         {
-            throw new NotImplementedException();
+            var country = await _countryRepository.GetEntityAsync(c => c.Id == stateDto.Id);
+
+            if (stateDto.Country != country.Country)
+            {
+                country.Country = stateDto.Country;
+            }
+            await _countryRepository.SaveChangesAsync();
         }
     }
 }
