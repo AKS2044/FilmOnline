@@ -95,7 +95,7 @@ namespace FilmOnline.Logic.Managers
         {
             var genre = await _genreRepository.GetEntityAsync(c => c.Id == genreDto.Id);
 
-            if (genreDto.Genres != genre.Genres)
+            if (genreDto.Genres != genre.Genres && genreDto.Genres is not null)
             {
                 genre.Genres = genreDto.Genres;
             }

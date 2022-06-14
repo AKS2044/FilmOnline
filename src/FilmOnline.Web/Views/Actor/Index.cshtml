@@ -1,0 +1,36 @@
+﻿@model FilmOnline.Web.ViewModels.ActorViewModel
+@{
+    ViewData["Title"] = "Редактирование актеров";
+}
+
+<div class="main__addFilm">
+    @foreach (var item in Model.ActorModelResponses)
+    {
+        <div class="item__view-block">
+            <div class="item__view">@item.FirstName @item.LastName @item.SecondName</div>
+                <form asp-action="DeleteActor" asp-route-id="@item.Id" method="post">
+                    <input class="button__film-post" type="submit" value="Delete" />
+                </form>
+                <form asp-action="UpgradeActor" asp-route-id="@item.Id" method="post">
+                    <input type="text" asp-for="ActorCreateRequest.FirstName" class="mine__input" placeholder="@item.FirstName" />
+                    <input type="text" asp-for="ActorCreateRequest.LastName" class="mine__input" placeholder="@item.LastName" />
+                    <input type="text" asp-for="ActorCreateRequest.SecondName" class="mine__input" placeholder="@item.SecondName" />
+                    <input class="button__film-post" type="submit" value="Изменить" />
+                </form>
+         </div>
+    }
+
+    <div class="line"></div>
+
+    <form asp-controller="Actor" asp-action="AddActor" method="post">
+        <div class="registration__block">
+            <label class="mine__form">Добавить страну:</label>
+            <input type="text" asp-for="ActorCreateRequest.FirstName" class="mine__input" placeholder="Имя" required />
+            <input type="text" asp-for="ActorCreateRequest.LastName" class="mine__input" placeholder="Фамилия" required />
+            <input type="text" asp-for="ActorCreateRequest.SecondName" class="mine__input" placeholder="SecondName" />
+        </div>
+        <div class="registration__block">
+            <input type="submit" value="Добавить" class="mine__button" />
+        </div>
+    </form>
+</div>

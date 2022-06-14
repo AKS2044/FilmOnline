@@ -1,0 +1,20 @@
+﻿@model IEnumerable<FilmShortModelResponse>
+@{
+    ViewData["Title"] = "Смотреть позже";
+}
+
+<main class="main__films">
+    @foreach (var film in Model)
+    {
+            <div class="post__films">
+                <form asp-controller="Account" asp-action="DeleteWatchLater" asp-route-idFilm="@film.Id" asp-route-id="@User.Identity.Name" method="post">
+                    <input type="submit" value="Delete" class="button__film-post" />
+                </form>
+                <a asp-action="Index" asp-controller="Film" asp-route-id="@film.Id"><img src="@Url.Content(film.PathPoster)" class="main__poster" alt=""></a>
+
+                <div class="post__name-block">
+                    <div class="post__name">@film.NameFilms:@film.ReleaseDate</div>
+                </div>
+            </div>
+    }
+</main>

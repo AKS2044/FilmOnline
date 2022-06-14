@@ -6,18 +6,13 @@ namespace FilmOnline.Data.Models
     public class User : IdentityUser
     {
         /// <summary>
-        /// Favourite films.
+        /// Navigation property for UserFavouriteFilms.
         /// </summary>
-        public int Favourite { get; set; }
+        public ICollection<UserFavouriteFilm> UserFavouriteFilms { get; set; }
 
         /// <summary>
-        /// Watch later.
+        /// Navigation property for UserWatchLaterFilms.
         /// </summary>
-        public int WatchLater { get; set; }
-
-        /// <summary>
-        /// Navigation property for UserFilms.
-        /// </summary>
-        public ICollection<UserFilm> UserFilms { get; set; }
+        public ICollection<UserWatchLaterFilm> UserWatchLaterFilms { get; set; }
     }
 }

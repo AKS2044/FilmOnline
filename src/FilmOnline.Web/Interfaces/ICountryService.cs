@@ -34,8 +34,7 @@ namespace FilmOnline.Web.Interfaces
         /// <summary>
         /// Get all country.
         /// </summary>
-        /// <param name="token">Jwt token.</param>
         /// <returns>Country collection.</returns>
-        Task<IEnumerable<CountryModelResponse>> GetAllCountryAsync(string token);
+        Task<IEnumerable<CountryModelResponse>> GetAllCountryAsync();
     }
 }

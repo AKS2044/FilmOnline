@@ -23,11 +23,11 @@ namespace FilmOnline.Web.Service
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public async Task AddAsync(object value, string token)
+        public async Task AddAsync(FilmCreateRequest model, string token)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/Film/addfilm")
             {
-                Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")
             };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -90,9 +90,10 @@ namespace FilmOnline.Web.Service
             return film;
         }
 
-        public async Task<FilmUpgradeModel> GetByIdUpgradeAsync(int id)
+        public async Task<FilmUpgradeModel> GetByIdUpgradeAsync(int id, string token)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/Upgrade{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/GetUpgrade{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             using var response = await _httpClient.SendAsync(request);
 
@@ -118,38 +119,6 @@ namespace FilmOnline.Web.Service
 
             var film = await response.Content.ReadFromJsonAsync<FilmShortModelResponse>();
             return film;
-        }
-
-        public async Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/Genre/allGenre");
-            using var response = await _httpClient.SendAsync(request);
-
-            // throw exception on error response
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                throw new Exception(error["message"]);
-            }
-
-            var genres = await response.Content.ReadFromJsonAsync<List<GenreModelResponse>>();
-            return genres;
-        }
-
-        public async Task<IEnumerable<ActorModelResponse>> GetAllActorAsync()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/Actor/allActor");
-            using var response = await _httpClient.SendAsync(request);
-
-            // throw exception on error response
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                throw new Exception(error["message"]);
-            }
-
-            var actors = await response.Content.ReadFromJsonAsync<List<ActorModelResponse>>();
-            return actors;
         }
 
         public async Task<IEnumerable<StageManagerModelResponse>> GetAllStageManagerAsync()
@@ -202,6 +171,24 @@ namespace FilmOnline.Web.Service
 
             var film = await response.Content.ReadFromJsonAsync<FilmModelResponse>();
             return film;
+        }
+
+        public async Task UpgradeFilmAsync(FilmCreateRequest model, string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Film/UpgradeFilm")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
         }
     }
 }

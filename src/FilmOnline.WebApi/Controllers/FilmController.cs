@@ -1,9 +1,12 @@
-﻿using FilmOnline.Logic.Interfaces;
+﻿using FilmOnline.Data.Models;
+using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
+using FilmOnline.WebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,14 +22,18 @@ namespace FilmOnline.WebApi.Controllers
     {
         private readonly IFilmManager _filmManager;
         public readonly IWebHostEnvironment _appEnvironment;
+        private readonly UserManager<User> _userManager;
 
-        public FilmController(IFilmManager filmManager, IWebHostEnvironment appEnvironment)
+        public FilmController(IFilmManager filmManager, 
+                              IWebHostEnvironment appEnvironment, 
+                              UserManager<User> userManager)
         {
             _filmManager = filmManager ?? throw new ArgumentNullException(nameof(filmManager));
             _appEnvironment = appEnvironment ?? throw new ArgumentNullException(nameof(appEnvironment));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        // POST api/<FilmController>
+        [OwnAuthorize]
         [HttpPost("addfilm")]
         public async Task<IActionResult> CreateAsync([FromBody] FilmCreateRequest request)
         {
@@ -40,7 +47,8 @@ namespace FilmOnline.WebApi.Controllers
             Uri baseURI = new("https://rating.kinopoisk.ru/");
             Uri XmlPuth = new(baseURI, $"{idRating}.xml");
             string xmlStr;
-            using (WebClient wc = new())
+            WebClient webClient = new();
+            using (WebClient wc = webClient)
             {
                 xmlStr = wc.DownloadString(XmlPuth);
             }
@@ -123,12 +131,103 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(film);
         }
 
-        [HttpGet("Upgrade{id}")]
-        public async Task<IActionResult> UpgradeFilm(int id)
+        [OwnAuthorize]
+        [HttpGet("GetUpgrade{id}")]
+        public async Task<IActionResult> GetUpgradeFilm(int id)
         {
             var film = await _filmManager.GetByIdForUpgradeAsync(id);
 
             return Ok(film);
+        }
+
+        [OwnAuthorize]
+        [HttpPost("UpgradeFilm")]
+        public async Task<IActionResult> UpgradeFilmAsync([FromBody] FilmCreateRequest request)
+        {
+            var filmActorDtos = new List<FilmActorDto>();
+            var filmGenreDtos = new List<FilmGenreDto>();
+            var filmCountryDtos = new List<FilmCountryDto>();
+            var filmStageManagerDtos = new List<FilmStageManagerDto>();
+
+
+            var idRating = request.IdRating;
+            Uri baseURI = new("https://rating.kinopoisk.ru/");
+            Uri XmlPuth = new(baseURI, $"{idRating}.xml");
+            string xmlStr;
+            WebClient webClient = new();
+            using (WebClient wc = webClient)
+            {
+                xmlStr = wc.DownloadString(XmlPuth);
+            }
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xmlStr);
+
+            XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
+            XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
+            XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
+            string kinopoiskData = kinopoisk.InnerText;
+            string ImdbData = imdb.InnerText;
+
+            FilmDto filmDto = new()
+            {
+                ImageName = request.ImageName,
+                PathPoster = request.PathPoster,
+                NameFilms = request.NameFilms,
+                AgeLimit = request.AgeLimit,
+                ReleaseDate = request.ReleaseDate,
+                Time = request.Time,
+                Description = request.Description,
+                IdRating = request.IdRating,
+                RatingImdb = ImdbData,
+                RatingKinopoisk = kinopoiskData,
+                RatingSite = request.RatingSite,
+                LinkFilmtrailer = request.LinkFilmtrailer,
+                LinkFilmPlayer = request.LinkFilmPlayer
+            };
+
+            foreach (var item in request.ActorIds)
+            {
+                filmActorDtos.Add(new FilmActorDto
+                {
+                    ActorId = item
+                });
+            }
+
+            foreach (var item in request.GenreIds)
+            {
+                filmGenreDtos.Add(new FilmGenreDto
+                {
+                    GenreId = item
+                });
+            }
+
+            foreach (var item in request.CountryIds)
+            {
+                filmCountryDtos.Add(new FilmCountryDto
+                {
+                    CountryId = item
+                });
+            }
+
+            foreach (var item in request.StageManagerIds)
+            {
+                filmStageManagerDtos.Add(new FilmStageManagerDto
+                {
+                    StageManagerId = item
+                });
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                await _filmManager.CreateAsync(filmDto,
+                    filmActorDtos,
+                    filmGenreDtos,
+                    filmCountryDtos,
+                    filmStageManagerDtos);
+            }
+
+            return Ok();
         }
 
         [HttpGet("name")]
@@ -143,7 +242,7 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [HttpGet("genre")]
-        public async Task<IActionResult> GetAllFilmsByGenre([FromBody] int genre) //Доделать вывод в mvc
+        public async Task<IActionResult> GetAllFilmsByGenre([FromBody] int genre)
         {
             var film = await _filmManager.GetFilmByGenreAsync(genre);
             var result = new List<FilmShortModelResponse>();
@@ -191,11 +290,81 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(result);
         }
 
-        // DELETE api/<FilmController>/5
+        [OwnAuthorize]
         [HttpDelete("DeleteFilm{id}")]
         public async Task DeleteAsync(int id)
         {
             await _filmManager.DeleteAsync(id);
+        }
+
+        [HttpPost("AddFavouriteFilm")]
+        public async Task<IActionResult> AddFavouriteFilmAsync(UserFilmRequest request)
+        {
+            var idUser = await _userManager.FindByNameAsync(request.UserName);
+            await _filmManager.AddFavouriteFilmAsync(request.FilmId, idUser.Id);
+            return Ok();
+        }
+
+        [HttpDelete("DeleteFavouriteFilm")]
+        public async Task<IActionResult> DeleteFavouriteFilmAsync(UserFilmRequest request)
+        {
+            var idUser = await _userManager.FindByNameAsync(request.UserName);
+            await _filmManager.DeleteFavouriteFilmAsync(request.FilmId, idUser.Id);
+            return Ok();
+        }
+
+        [HttpGet("GetAllFavouriteFilm")]
+        public async Task<IActionResult> GetAllFavouriteFilmAsync([FromBody] string userName)
+        {
+            var idUser = await _userManager.FindByNameAsync(userName);
+            var model = await _filmManager.GetAllFavouriteFilmAsync(idUser.Id);
+            var result = new List<FilmShortModelResponse>();
+            foreach (var item in model)
+            {
+                result.Add(new FilmShortModelResponse
+                {
+                    Id = item.Id,
+                    NameFilms = item.NameFilms,
+                    ReleaseDate = item.ReleaseDate,
+                    PathPoster = item.PathPoster
+                });
+            }
+            return Ok(result);
+        }
+
+        [HttpPost("AddWatchLaterFilm")]
+        public async Task<IActionResult> AddWatchLaterFilmAsync(UserFilmRequest request)
+        {
+            var idUser = await _userManager.FindByNameAsync(request.UserName);
+            await _filmManager.AddWatchLaterFilmAsync(request.FilmId, idUser.Id);
+            return Ok();
+        }
+
+        [HttpDelete("DeleteWatchLaterFilm")]
+        public async Task<IActionResult> DeleteWatchLaterFilmAsync(UserFilmRequest request)
+        {
+            var idUser = await _userManager.FindByNameAsync(request.UserName);
+            await _filmManager.DeleteWatchLaterFilmAsync(request.FilmId, idUser.Id);
+            return Ok();
+        }
+
+        [HttpGet("GetAllWatchLaterFilm")]
+        public async Task<IActionResult> GetAlWatchLaterFilmAsync([FromBody] string userName)
+        {
+            var idUser = await _userManager.FindByNameAsync(userName);
+            var model = await _filmManager.GetAllWatchLaterFilmAsync(idUser.Id);
+            var result = new List<FilmShortModelResponse>();
+            foreach (var item in model)
+            {
+                result.Add(new FilmShortModelResponse
+                {
+                    Id = item.Id,
+                    NameFilms = item.NameFilms,
+                    ReleaseDate = item.ReleaseDate,
+                    PathPoster = item.PathPoster
+                });
+            }
+            return Ok(result);
         }
     }
 }

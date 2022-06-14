@@ -7,7 +7,7 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// <summary>
         /// Country.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Title is required.")]
         public string Country { get; set; }
     }
 }

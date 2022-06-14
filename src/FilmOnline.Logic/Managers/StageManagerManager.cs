@@ -91,9 +91,15 @@ namespace FilmOnline.Logic.Managers
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(StageManagerDto stageManagerDto)
+        public async Task UpdateAsync(StageManagerDto stageManagerDto)
         {
-            throw new NotImplementedException();
+            var stageManager = await _stageManagerRepository.GetEntityAsync(c => c.Id == stageManagerDto.Id);
+
+            if (stageManagerDto.StageManagers != stageManager.StageManagers && stageManagerDto.StageManagers is not null)
+            {
+                stageManager.StageManagers = stageManagerDto.StageManagers;
+            }
+            await _stageManagerRepository.SaveChangesAsync();
         }
     }
 }

@@ -83,8 +83,12 @@
     </div>
     <div class="film__description">
         <div class="media__use">
-            <a href="#"><div class="button__film-post">Избранное</div></a>
-            <a href="#"><div class="button__film-post">Смотреть позже</div></a>
+            <form asp-controller="Account" asp-action="AddFilmInFavourite" asp-route-id="@Model.Id" method="post">
+                    <input type="submit" value="Избранное" class="button__film-post" />
+            </form>
+            <form asp-controller="Account" asp-action="AddFilmInWatchLater" asp-route-id="@Model.Id" method="post">
+                    <input type="submit" value="Смотреть позже" class="button__film-post" />
+            </form>
             <a href="#openModal"><div class="button__film-post">Трейлер</div></a>
         </div>
         <div>

@@ -98,9 +98,25 @@ namespace FilmOnline.Logic.Managers
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(ActorDto model)
+        public async Task UpdateAsync(ActorDto actorDto)
         {
-            throw new NotImplementedException();
+            var actor = await _actorRepository.GetEntityAsync(c => c.Id == actorDto.Id);
+
+            if (actorDto.FirstName != actor.FirstName && actorDto.FirstName is not null)
+            {
+                actor.FirstName = actorDto.FirstName;
+            }
+
+            if (actorDto.LastName != actor.LastName && actorDto.LastName is not null)
+            {
+                actor.LastName = actorDto.LastName;
+            }
+
+            if (actorDto.SecondName != actor.SecondName && actorDto.SecondName is not null)
+            {
+                actor.SecondName = actorDto.SecondName;
+            }
+            await _actorRepository.SaveChangesAsync();
         }
     }
 }

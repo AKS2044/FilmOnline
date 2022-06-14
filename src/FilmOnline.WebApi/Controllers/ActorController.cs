@@ -1,6 +1,7 @@
 ﻿using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
+using FilmOnline.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace FilmOnline.WebApi.Controllers
             _actorManager = actorManager ?? throw new ArgumentNullException(nameof(actorManager));
         }
 
+        [OwnAuthorize]
         [HttpPost("addActor")]
         public async Task<IActionResult> CreateAsync([FromBody] ActorCreateRequest request)
         {
@@ -44,10 +46,25 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(actors);
         }
 
+        [OwnAuthorize]
         [HttpDelete("{id}")]
         public async Task DeleteAsync(int id)
         {
             await _actorManager.DeleteAsync(id);
+        }
+
+        [OwnAuthorize]
+        [HttpPut("{id}")]
+        public async Task UpdateActorAsync(ActorDto actorDto, int id)
+        {
+            ActorDto result = new()
+            {
+                Id = id,
+                FirstName = actorDto.FirstName,
+                LastName = actorDto.LastName,
+                SecondName = actorDto.SecondName
+            };
+            await _actorManager.UpdateAsync(result);
         }
     }
 }

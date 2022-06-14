@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FilmOnline.WebApi.Controllers
 {
-    [OwnAuthorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CountryController : ControllerBase
@@ -20,6 +19,7 @@ namespace FilmOnline.WebApi.Controllers
             _countryManager = countryManager ?? throw new ArgumentNullException(nameof(countryManager));
         }
 
+        [OwnAuthorize]
         [HttpPost("addCountry")]
         public async Task<IActionResult> CreateAsync([FromBody] CountryCreateRequest request)
         {
@@ -44,12 +44,14 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(countries);
         }
 
+        [OwnAuthorize]
         [HttpDelete("{id}")]
         public async Task DeleteAsync(int id)
         {
             await _countryManager.DeleteAsync(id);
         }
 
+        [OwnAuthorize]
         [HttpPut("{id}")]
         public async Task UpdateCountryAsync(StateDto stateDto, int id)
         {

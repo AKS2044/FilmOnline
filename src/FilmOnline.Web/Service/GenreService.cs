@@ -59,10 +59,9 @@ namespace FilmOnline.Web.Service
             }
         }
 
-        public async Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync(string token)
+        public async Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/Country/allGenre");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/Genre/allGenre");
 
             using var response = await _httpClient.SendAsync(request);
 
@@ -73,8 +72,8 @@ namespace FilmOnline.Web.Service
                 throw new Exception(error["message"]);
             }
 
-            var countries = await response.Content.ReadFromJsonAsync<List<GenreModelResponse>>();
-            return countries;
+            var genres = await response.Content.ReadFromJsonAsync<List<GenreModelResponse>>();
+            return genres;
         }
 
         public async Task UpgradeGenreAsync(int id, string token, string value)

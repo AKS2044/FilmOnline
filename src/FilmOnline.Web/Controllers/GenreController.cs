@@ -19,7 +19,7 @@ namespace FilmOnline.Web.Controllers
         /// Constructor with params.
         /// </summary>
         /// <param name="filmService">Film Service.</param>
-        /// <param name="genreService">Film Service.</param>
+        /// <param name="genreService">Genre Service.</param>
         public GenreController(IGenreService genreService, IFilmService filmService)
         {
             _genreService = genreService ?? throw new ArgumentNullException(nameof(genreService));
@@ -32,7 +32,7 @@ namespace FilmOnline.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var filmCollection = await _filmService.GetAllShortAsync();
-            var genreCollection = await _filmService.GetAllGenreAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
 
             ViewBag.RandomFilm = resultRandomFilm.Id;
@@ -55,8 +55,10 @@ namespace FilmOnline.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddGenre(GenreViewModel request)
         {
-            request = request ?? throw new ArgumentNullException(nameof(request));
-
+            if (request.Genre is null)
+            {
+                return NoContent();
+            }
             var token = User.FindFirst(ClaimTypes.CookiePath).Value;
             await _genreService.AddGenreAsync(request.Genre, token);
 
@@ -69,6 +71,10 @@ namespace FilmOnline.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UpgradeGenre(int id, GenreViewModel request)
         {
+            if (request.Genre is null)
+            {
+                return NoContent();
+            }
             var token = User.FindFirst(ClaimTypes.CookiePath).Value;
             await _genreService.UpgradeGenreAsync(id, token, request.Genre);
             return RedirectToAction("Index", "Genre");

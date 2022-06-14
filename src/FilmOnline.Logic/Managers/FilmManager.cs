@@ -21,6 +21,8 @@ namespace FilmOnline.Logic.Managers
         private readonly IRepositoryManager<FilmGenre> _filmGenreRepository;
         private readonly IRepositoryManager<FilmStageManager> _filmStageManagerRepository;
         private readonly IRepositoryManager<FilmRating> _filmRatingRepository;
+        private readonly IRepositoryManager<UserFavouriteFilm> _userFavouriteFilmRepository;
+        private readonly IRepositoryManager<UserWatchLaterFilm> _userWatchLaterFilmRepository;
         private readonly IRepositoryManager<Rating> _ratingRepository;
         private readonly IRepositoryManager<State> _countryRepository;
         private readonly IRepositoryManager<Genre> _genreRepository;
@@ -37,7 +39,9 @@ namespace FilmOnline.Logic.Managers
                            IRepositoryManager<State> countryRepository,
                            IRepositoryManager<Genre> genreRepository,
                            IRepositoryManager<StageManager> stageManagerRepository,
-                           IRepositoryManager<Actor> actorRepository)
+                           IRepositoryManager<Actor> actorRepository,
+                           IRepositoryManager<UserWatchLaterFilm> userWatchLaterFilmRepository,
+                           IRepositoryManager<UserFavouriteFilm> userFavouriteFilmRepository)
         {
             _filmRepository = filmRepository ?? throw new ArgumentNullException(nameof(filmRepository));
             _filmActorRepository = filmActorRepository ?? throw new ArgumentNullException(nameof(filmActorRepository));
@@ -50,6 +54,8 @@ namespace FilmOnline.Logic.Managers
             _actorRepository = actorRepository ?? throw new ArgumentNullException(nameof(actorRepository));
             _stageManagerRepository = stageManagerRepository ?? throw new ArgumentNullException(nameof(stageManagerRepository));
             _filmRatingRepository = filmRatingRepository ?? throw new ArgumentNullException(nameof(filmRatingRepository));
+            _userWatchLaterFilmRepository = userWatchLaterFilmRepository ?? throw new ArgumentNullException(nameof(userWatchLaterFilmRepository));
+            _userFavouriteFilmRepository = userFavouriteFilmRepository ?? throw new ArgumentNullException(nameof(userFavouriteFilmRepository));
             _ratingRepository = ratingRepository ?? throw new ArgumentNullException(nameof(ratingRepository));
         }
 
@@ -59,6 +65,80 @@ namespace FilmOnline.Logic.Managers
             List<FilmCountryDto> filmCountryDto,
             List<FilmStageManagerDto> filmStageManagerDto)
         {
+            var film = new Film()
+            {
+                NameFilms = filmDto.NameFilms,
+                AgeLimit = filmDto.AgeLimit,
+                ReleaseDate = filmDto.ReleaseDate,
+                Description = filmDto.Description,
+                Time = filmDto.Time,
+                PathPoster = filmDto.PathPoster,
+                ImageName = filmDto.ImageName,
+                IdRating = filmDto.IdRating,
+                RatingSite = "0",
+                RatingKinopoisk = filmDto.RatingKinopoisk,
+                RatingImdb = filmDto.RatingImdb,
+                LinkFilmtrailer = filmDto.LinkFilmtrailer,
+                LinkFilmPlayer = filmDto.LinkFilmPlayer
+            };
+
+            await _filmRepository.CreateAsync(film);
+            await _filmRepository.SaveChangesAsync();
+
+            int id = film.Id;
+            foreach (var item in filmActorDto)
+            {
+                FilmActor filmActor = new()
+                {
+                    FilmId = id,
+                    ActorId = item.ActorId
+                };
+                await _filmActorRepository.CreateAsync(filmActor);
+            }
+
+            foreach (var item in filmGenreDto)
+            {
+                FilmGenre filmGenre = new()
+                {
+                    FilmId = id,
+                    GenreId = item.GenreId
+                };
+                await _filmGenreRepository.CreateAsync(filmGenre);
+            }
+
+            foreach (var item in filmCountryDto)
+            {
+                FilmCountry filmCountry = new()
+                {
+                    FilmId = id,
+                    CountryId = item.CountryId
+                };
+                await _filmCountryRepository.CreateAsync(filmCountry);
+            }
+
+            foreach (var item in filmStageManagerDto)
+            {
+                FilmStageManager filmStageManager = new()
+                {
+                    FilmId = id,
+                    StageManagerId = item.StageManagerId
+                };
+                await _filmStageManagerRepository.CreateAsync(filmStageManager);
+            }
+            await _filmRepository.SaveChangesAsync();
+        }
+
+        public async Task UpgradeFilmAsync(FilmDto filmDto,
+           List<FilmActorDto> filmActorDto,
+           List<FilmGenreDto> filmGenreDto,
+           List<FilmCountryDto> filmCountryDto,
+           List<FilmStageManagerDto> filmStageManagerDto)
+        {
+
+            if (true)
+            {
+
+            }
             var film = new Film()
             {
                 NameFilms = filmDto.NameFilms,
@@ -354,6 +434,90 @@ namespace FilmOnline.Logic.Managers
             float total = (float)ratings.Sum() / (float)ratings.Count;
 
             return total;
+        }
+
+        public async Task AddFavouriteFilmAsync(int idFilm, string idUser)
+        {
+            UserFavouriteFilm model = new()
+            {
+                UserId = idUser,
+                FilmId = idFilm
+            };
+            var isAlready = await _userFavouriteFilmRepository.GetEntityAsync(m => m.UserId == idUser && m.FilmId == idFilm);
+            if (isAlready is null)
+            {
+                await _userFavouriteFilmRepository.CreateAsync(model);
+                await _userFavouriteFilmRepository.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteFavouriteFilmAsync(int idFilm, string idUser)
+        {
+            var model = await _userFavouriteFilmRepository.GetEntityAsync(m => m.UserId == idUser && m.FilmId == idFilm);
+            _userFavouriteFilmRepository.Delete(model);
+            await _userFavouriteFilmRepository.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<FilmDto>> GetAllFavouriteFilmAsync(string idUser)
+        {
+            var favouriteFilmIds = await _userFavouriteFilmRepository.GetAll().Where(r => r.UserId == idUser).Select(r => r.FilmId).ToListAsync();
+            var films = await _filmRepository.GetAll().Where(r => favouriteFilmIds.Contains(r.Id)).Select(r => new FilmDto
+            {
+                Id = r.Id,
+                NameFilms = r.NameFilms,
+                PathPoster = r.PathPoster,
+                ReleaseDate = r.ReleaseDate,
+                ImageName = r.ImageName
+            }).ToListAsync();
+            return films;
+        }
+
+        public async Task AddWatchLaterFilmAsync(int idFilm, string idUser)
+        {
+            UserWatchLaterFilm model = new()
+            {
+                UserId = idUser,
+                FilmId = idFilm
+            };
+            var isAlready = await _userWatchLaterFilmRepository.GetEntityAsync(m => m.UserId == idUser && m.FilmId == idFilm);
+            if (isAlready is null)
+            {
+                await _userWatchLaterFilmRepository.CreateAsync(model);
+                await _userWatchLaterFilmRepository.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteWatchLaterFilmAsync(int idFilm, string idUser)
+        {
+            var model = await _userWatchLaterFilmRepository.GetEntityAsync(m => m.UserId == idUser && m.FilmId == idFilm);
+            _userWatchLaterFilmRepository.Delete(model);
+            await _userWatchLaterFilmRepository.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<FilmDto>> GetAllWatchLaterFilmAsync(string idUser)
+        {
+            var wathLaterFilmIds = await _userWatchLaterFilmRepository.GetAll().Where(r => r.UserId == idUser).Select(r => r.FilmId).ToListAsync();
+            var films = await _filmRepository.GetAll().Where(r => wathLaterFilmIds.Contains(r.Id)).Select(r => new FilmDto
+            {
+                Id = r.Id,
+                NameFilms = r.NameFilms,
+                PathPoster = r.PathPoster,
+                ReleaseDate = r.ReleaseDate,
+                ImageName = r.ImageName
+            }).ToListAsync();
+            return films;
+        }
+
+        public async Task<int> TotalAllWatchLaterFilmAsync(string idUser)
+        {
+            var wathLaterFilmIds = await _userWatchLaterFilmRepository.GetAll().Where(r => r.UserId == idUser).Select(r => r.FilmId).ToListAsync();
+            return wathLaterFilmIds.Count();
+        }
+
+        public async Task<int> TotalAllFavouriteFilmAsync(string idUser)
+        {
+            var favouriteFilmIds = await _userFavouriteFilmRepository.GetAll().Where(r => r.UserId == idUser).Select(r => r.FilmId).ToListAsync();
+            return favouriteFilmIds.Count();
         }
     }
 }

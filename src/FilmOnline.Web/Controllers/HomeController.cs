@@ -14,14 +14,17 @@ namespace FilmOnline.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IFilmService _filmService;
+        private readonly IGenreService _genreService;
 
         /// <summary>
         /// Constructor with params.
         /// </summary>
         /// <param name="filmService">Film Service.</param>
-        public HomeController(IFilmService filmService)
+        /// /// <param name="genreService">Genre Service.</param>
+        public HomeController(IFilmService filmService, IGenreService genreService)
         {
             _filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
+            _genreService = genreService ?? throw new ArgumentNullException(nameof(filmService));
         }
 
         /// <summary>
@@ -43,7 +46,7 @@ namespace FilmOnline.Web.Controllers
                 FilmShortModelResponses = items
             };
 
-            var genreCollection = await _filmService.GetAllGenreAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
 
             ViewBag.RandomFilm = resultRandomFilm.Id;
@@ -60,7 +63,7 @@ namespace FilmOnline.Web.Controllers
         public async Task<IActionResult> Search(string name)
         {
             var filmCollection = await _filmService.GetAllShortAsync();
-            var genreCollection = await _filmService.GetAllGenreAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
 
             ViewBag.RandomFilm = resultRandomFilm.Id;
@@ -78,7 +81,7 @@ namespace FilmOnline.Web.Controllers
         public async Task<IActionResult> Admin()
         {
             var filmCollection = await _filmService.GetAllShortAsync();
-            var genreCollection = await _filmService.GetAllGenreAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
 
             ViewBag.RandomFilm = resultRandomFilm.Id;

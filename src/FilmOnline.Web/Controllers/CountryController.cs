@@ -9,21 +9,24 @@ using System.Threading.Tasks;
 
 namespace FilmOnline.Web.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class CountryController : Controller
     {
         private readonly ICountryService _countryService;
         private readonly IFilmService _filmService;
+        private readonly IGenreService _genreService;
 
         /// <summary>
         /// Constructor with params.
         /// </summary>
         /// <param name="filmService">Film Service.</param>
-        /// <param name="countryService">Film Service.</param>
-        public CountryController(ICountryService countryService, IFilmService filmService)
+        /// <param name="countryService">Country Service.</param>
+        /// <param name="genreService">Genre Service.</param>
+        public CountryController(ICountryService countryService, IFilmService filmService, IGenreService genreService)
         {
             _countryService = countryService ?? throw new ArgumentNullException(nameof(countryService));
             _filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
+            _genreService = genreService ?? throw new ArgumentNullException(nameof(filmService));
         }
 
         /// <summary>
@@ -34,9 +37,9 @@ namespace FilmOnline.Web.Controllers
             var token = User.FindFirst(ClaimTypes.CookiePath).Value;
 
             var filmCollection = await _filmService.GetAllShortAsync();
-            var genreCollection = await _filmService.GetAllGenreAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
             var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
-            var countryCollection = await _countryService.GetAllCountryAsync(token);
+            var countryCollection = await _countryService.GetAllCountryAsync();
 
             ViewBag.RandomFilm = resultRandomFilm.Id;
             ViewBag.Genres = genreCollection;
@@ -58,7 +61,10 @@ namespace FilmOnline.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCount(CountryViewModel request)
         {
-            request = request ?? throw new ArgumentNullException(nameof(request));
+            if (request.Country is null)
+            {
+                return NoContent();
+            }
 
             var token = User.FindFirst(ClaimTypes.CookiePath).Value;
             await _countryService.AddCountryAsync(request.Country, token);
@@ -72,6 +78,10 @@ namespace FilmOnline.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UpgradeCountry(int id, CountryViewModel request)
         {
+            if (request.Country is null)
+            {
+                return NoContent();
+            }
             var token = User.FindFirst(ClaimTypes.CookiePath).Value;
             await _countryService.UpgradeCountryAsync(id, token, request.Country);
             return RedirectToAction("Index", "Country");

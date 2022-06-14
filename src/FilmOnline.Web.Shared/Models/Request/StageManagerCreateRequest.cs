@@ -8,6 +8,6 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// StageManager.
         /// </summary>
         [Required]
-        public string StageManager { get; set; }
+        public string StageManagers { get; set; }
     }
 }

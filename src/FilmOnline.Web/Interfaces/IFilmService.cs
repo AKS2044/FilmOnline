@@ -1,4 +1,5 @@
 ﻿using FilmOnline.Web.Shared.Models;
+using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,9 +14,16 @@ namespace FilmOnline.Web.Interfaces
         /// <summary>
         /// Add film.
         /// </summary>
-        /// <param name="value">Object.</param>
+        /// <param name="model">Object.</param>
         /// <param name="token">Jwt token.</param>
-        Task AddAsync(object value, string token);
+        Task AddAsync(FilmCreateRequest model, string token);
+
+        /// <summary>
+        /// Upgrade film.
+        /// </summary>
+        /// <param name="model">Object.</param>
+        /// <param name="token">Jwt token.</param>
+        Task UpgradeFilmAsync(FilmCreateRequest model, string token);
 
         /// <summary>
         /// Delete film.
@@ -29,18 +37,6 @@ namespace FilmOnline.Web.Interfaces
         /// </summary>
         /// <returns>Film collection.</returns>
         Task<IEnumerable<FilmShortModelResponse>> GetAllShortAsync();
-
-        /// <summary>
-        /// Get all genre.
-        /// </summary>
-        /// <returns>Genre collection.</returns>
-        Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync();
-
-        /// <summary>
-        /// Get all actor.
-        /// </summary>
-        /// <returns>Actor collection.</returns>
-        Task<IEnumerable<ActorModelResponse>> GetAllActorAsync();
 
         /// <summary>
         /// Get all stage manager.
@@ -59,8 +55,9 @@ namespace FilmOnline.Web.Interfaces
         /// Get film by id for upgrade.
         /// </summary>
         /// <param name="id">Film id.</param>
+        /// <param name="token">Jwt token.</param>
         /// <returns>Film.</returns>
-        Task<FilmUpgradeModel> GetByIdUpgradeAsync(int id);
+        Task<FilmUpgradeModel> GetByIdUpgradeAsync(int id, string token);
 
         /// <summary>
         /// Get random film by id.

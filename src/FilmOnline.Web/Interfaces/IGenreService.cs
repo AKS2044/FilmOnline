@@ -34,8 +34,7 @@ namespace FilmOnline.Web.Interfaces
         /// <summary>
         /// Get all genre.
         /// </summary>
-        /// <param name="token">Jwt token.</param>
         /// <returns>Genre collection.</returns>
-        Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync(string token);
+        Task<IEnumerable<GenreModelResponse>> GetAllGenreAsync();
     }
 }

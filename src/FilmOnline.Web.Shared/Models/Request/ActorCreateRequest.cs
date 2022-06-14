@@ -19,7 +19,6 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// <summary>
         /// Second name.
         /// </summary>
-        [Required]
         public string SecondName { get; set; }
     }
 }

@@ -1,0 +1,32 @@
+﻿@model FilmOnline.Web.ViewModels.StageManagerViewModel
+@{
+    ViewData["Title"] = "Редактирование режиссеров";
+}
+
+<div class="main__addFilm">
+    @foreach (var item in Model.StageManagerModelResponses)
+    {
+        <div class="item__view-block">
+            <div class="item__view">@item.StageManagers</div>
+                <form asp-action="DeleteStageManager" asp-route-id="@item.Id" method="post">
+                    <input class="button__film-post" type="submit" value="Delete" />
+                </form>
+                <form asp-action="UpgradeStageManager" asp-route-id="@item.Id" method="post">
+                    <input type="text" asp-for="StageManager" class="mine__input" required />
+                    <input class="button__film-post" type="submit" value="Изменить" />
+                </form>
+         </div>
+    }
+
+    <div class="line"></div>
+
+    <form asp-controller="StageManager" asp-action="AddStageManager" method="post">
+        <div class="registration__block">
+            <label asp-for="StageManager" class="mine__form">Добавить режиссера:</label>
+            <input type="text" asp-for="StageManager" class="mine__input" required />
+        </div>
+        <div class="registration__block">
+            <input type="submit" value="Добавить" class="mine__button" />
+        </div>
+    </form>
+</div>

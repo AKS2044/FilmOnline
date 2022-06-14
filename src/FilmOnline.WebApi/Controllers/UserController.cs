@@ -22,16 +22,19 @@ namespace FilmOnline.WebApi.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IJwtService _jwtService;
         private readonly AppSettings _appSettings;
+        private readonly IFilmManager _filmManager;
 
         public UserController(
             SignInManager<User> signInManager,
             UserManager<User> userManager,
             IJwtService jwtService,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IFilmManager filmManager)
         {
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
+            _filmManager = filmManager ?? throw new ArgumentNullException(nameof(filmManager));
 
             if (appSettings is null)
             {
@@ -105,19 +108,21 @@ namespace FilmOnline.WebApi.Controllers
         [HttpGet("userProfile")]
         public async Task<IActionResult> ProfileAsync([FromBody] string userName)
         {
-            User user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
 
             if (user is null)
             {
                 return NotFound(user);
             }
+            int totalWatchLater = await _filmManager.TotalAllWatchLaterFilmAsync(user.Id);
+            int totalFavourite = await _filmManager.TotalAllFavouriteFilmAsync(user.Id);
             ProfileUserResponse model = new()
             {
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
-                Favourite = user.Favourite,
-                WatchLater = user.WatchLater
+                WatchLater = totalWatchLater,
+                Favourite = totalFavourite
             };
 
             return Ok(model);

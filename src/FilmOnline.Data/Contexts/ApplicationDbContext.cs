@@ -67,9 +67,14 @@ namespace FilmOnline.Data.Contexts
         public DbSet<Rating> Ratings { get; set; }
 
         /// <summary>
-        /// DbSet for UserFilms.
+        /// DbSet for UserFavouriteFilms.
         /// </summary>
-        public DbSet<UserFilm> UserFilms { get; set; }
+        public DbSet<UserFavouriteFilm> UserFavouriteFilms { get; set; }
+
+        /// <summary>
+        /// DbSet for UserWatchLaterFilms.
+        /// </summary>
+        public DbSet<UserWatchLaterFilm> UserWatchLaterFilms { get; set; }
 
         /// <summary>
         /// Contructor with params.
@@ -96,7 +101,8 @@ namespace FilmOnline.Data.Contexts
             builder.ApplyConfiguration(new GenresConfiguration());
             builder.ApplyConfiguration(new StageManagersConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
-            builder.ApplyConfiguration(new UserFilmConfiguration());
+            builder.ApplyConfiguration(new UserFavouriteFilmsConfiguration());
+            builder.ApplyConfiguration(new UserWatchLaterFilmsConfiguration());
 
             base.OnModelCreating(builder);
         }

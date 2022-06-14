@@ -1,6 +1,9 @@
 ﻿namespace FilmOnline.Data.Models
 {
-    public class UserFilm
+    /// <summary>
+    /// Favourite film.
+    /// </summary>
+    public class UserFavouriteFilm
     {
         /// <summary>
         /// Identification.

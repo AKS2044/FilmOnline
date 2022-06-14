@@ -12,7 +12,7 @@
                     <input class="button__film-post" type="submit" value="Delete" />
                 </form>
                 <form asp-action="UpgradeGenre" asp-route-id="@item.Id" method="post">
-                    <input type="text" asp-for="Genre" class="mine__input" />
+                    <input type="text" asp-for="Genre" class="mine__input" required />
                     <input class="button__film-post" type="submit" value="Изменить" />
                 </form>
          </div>
@@ -23,7 +23,7 @@
     <form asp-controller="Genre" asp-action="AddGenre" method="post">
         <div class="registration__block">
             <label asp-for="Genre" class="mine__form">Добавить жанр:</label>
-            <input type="text" asp-for="Genre" class="mine__input" />
+            <input type="text" asp-for="Genre" class="mine__input" required />
         </div>
         <div class="registration__block">
             <input type="submit" value="Добавить" class="mine__button" />

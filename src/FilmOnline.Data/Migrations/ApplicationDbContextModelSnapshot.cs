@@ -309,9 +309,6 @@ namespace FilmOnline.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Favourite")
-                        .HasColumnType("int");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -345,9 +342,6 @@ namespace FilmOnline.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("WatchLater")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -361,7 +355,7 @@ namespace FilmOnline.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("FilmOnline.Data.Models.UserFilm", b =>
+            modelBuilder.Entity("FilmOnline.Data.Models.UserFavouriteFilm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -381,7 +375,30 @@ namespace FilmOnline.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserFilms", "user");
+                    b.ToTable("UserFavouriteFilms", "user");
+                });
+
+            modelBuilder.Entity("FilmOnline.Data.Models.UserWatchLaterFilm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("FilmId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserWatchLaterFilms", "user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -612,16 +629,34 @@ namespace FilmOnline.Data.Migrations
                     b.Navigation("StageManager");
                 });
 
-            modelBuilder.Entity("FilmOnline.Data.Models.UserFilm", b =>
+            modelBuilder.Entity("FilmOnline.Data.Models.UserFavouriteFilm", b =>
                 {
                     b.HasOne("FilmOnline.Data.Models.Film", "Film")
-                        .WithMany("UserFilms")
+                        .WithMany("UserFavouriteFilms")
                         .HasForeignKey("FilmId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FilmOnline.Data.Models.User", "User")
-                        .WithMany("UserFilms")
+                        .WithMany("UserFavouriteFilms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Film");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FilmOnline.Data.Models.UserWatchLaterFilm", b =>
+                {
+                    b.HasOne("FilmOnline.Data.Models.Film", "Film")
+                        .WithMany("UserWatchLaterFilms")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FilmOnline.Data.Models.User", "User")
+                        .WithMany("UserWatchLaterFilms")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -698,7 +733,9 @@ namespace FilmOnline.Data.Migrations
 
                     b.Navigation("FilmStageManagers");
 
-                    b.Navigation("UserFilms");
+                    b.Navigation("UserFavouriteFilms");
+
+                    b.Navigation("UserWatchLaterFilms");
                 });
 
             modelBuilder.Entity("FilmOnline.Data.Models.Genre", b =>
@@ -723,7 +760,9 @@ namespace FilmOnline.Data.Migrations
 
             modelBuilder.Entity("FilmOnline.Data.Models.User", b =>
                 {
-                    b.Navigation("UserFilms");
+                    b.Navigation("UserFavouriteFilms");
+
+                    b.Navigation("UserWatchLaterFilms");
                 });
 #pragma warning restore 612, 618
         }

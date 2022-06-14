@@ -6,9 +6,14 @@
     public static class Table
     {
         /// <summary>
-        /// User film.
+        /// User favourite films.
         /// </summary>
-        public const string UserFilms = nameof(UserFilms);
+        public const string UserFavouriteFilms = nameof(UserFavouriteFilms);
+
+        /// <summary>
+        /// User watch later films.
+        /// </summary>
+        public const string UserWatchLaterFilms = nameof(UserWatchLaterFilms);
 
         /// <summary>
         /// User.

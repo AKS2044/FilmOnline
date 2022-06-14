@@ -95,7 +95,7 @@ namespace FilmOnline.Logic.Managers
         {
             var country = await _countryRepository.GetEntityAsync(c => c.Id == stateDto.Id);
 
-            if (stateDto.Country != country.Country)
+            if (stateDto.Country != country.Country && stateDto.Country is not null)
             {
                 country.Country = stateDto.Country;
             }

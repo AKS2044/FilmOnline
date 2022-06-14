@@ -30,7 +30,9 @@ namespace FilmOnline.Web
             services.AddScoped<IFilmService, FilmService>();
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<IGenreService, GenreService>();
-            services.AddScoped(x => new HttpClient() { BaseAddress = new Uri("https://localhost:44369") });//Change your port
+            services.AddScoped<IActorService, ActorService>();
+            services.AddScoped<IStageManagerService, StageManagerService>();
+            services.AddScoped(x => new HttpClient() { BaseAddress = new Uri("https://localhost:44369") });
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }

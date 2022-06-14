@@ -93,11 +93,6 @@ namespace FilmOnline.Data.Models
         public ICollection<FilmRating> FilmRatings { get; set; }
 
         /// <summary>
-        /// Navigation property for UserFilms.
-        /// </summary>
-        public ICollection<UserFilm> UserFilms { get; set; }
-
-        /// <summary>
         /// Navigation property for FilmCountry.
         /// </summary>
         public ICollection<FilmCountry> FilmCountries { get; set; }
@@ -106,5 +101,15 @@ namespace FilmOnline.Data.Models
         /// Navigation property for FilmGenre.
         /// </summary>
         public ICollection<FilmGenre> FilmGenres { get; set; }
+
+        /// <summary>
+        /// Navigation property for UserFavouriteFilms.
+        /// </summary>
+        public ICollection<UserFavouriteFilm> UserFavouriteFilms { get; set; }
+
+        /// <summary>
+        /// Navigation property for UserWatchLaterFilms.
+        /// </summary>
+        public ICollection<UserWatchLaterFilm> UserWatchLaterFilms { get; set; }
     }
 }

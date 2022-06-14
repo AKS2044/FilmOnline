@@ -25,23 +25,71 @@ namespace FilmOnline.Web.Interfaces
         /// <summary>
         /// Get user profile by id.
         /// </summary>
-        /// /// <param name="token">Jwt token.</param>
-        /// /// <param name="userId">User id.</param>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="userId">User id.</param>
         /// <returns>Profile user.</returns>
         Task<ProfileUserResponse> GetProfileByNameAsync(string userId, string token);
 
         /// <summary>
         /// Get all user.
         /// </summary>
-        /// /// <param name="token">Jwt token.</param>
+        /// <param name="token">Jwt token.</param>
         /// <returns>List user.</returns>
         Task<List<ProfileUserResponse>> GetAllUsersAsync(string token);
 
         /// <summary>
         /// Delete user by id.
         /// </summary>
-        /// /// <param name="token">Jwt token.</param>
-        /// /// <param name="Id">User id.</param>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="Id">User id.</param>
         Task DeleteUserAsync(string Id, string token);
+
+        /// <summary>
+        /// Add favourite film by user.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="filmId">Film id.</param>
+        /// <param name="userName">User name.</param>
+        Task AddFavouriteFilmAsync(string userName, int filmId, string token);
+
+        /// <summary>
+        /// Get all favourite film by user.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="userName">User name.</param>
+        /// <returns>Short model response.</returns>
+        Task<List<FilmShortModelResponse>> GetFavouriteFilmAsync(string userName, string token);
+
+        /// <summary>
+        /// Delete favourite film by id.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="userName">User name.</param>
+        /// <param name="idFilm">Film id.</param>
+        Task DeleteFavouriteFilmUserAsync(int idFilm, string userName, string token);
+
+        /// <summary>
+        /// Add watch later film by user.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="filmId">Film id.</param>
+        /// <param name="userName">User name.</param>
+        Task AddWatchLaterFilmAsync(string userName, int filmId, string token);
+
+        /// <summary>
+        /// Get all watch later film by user.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="userName">User name.</param>
+        /// <returns>Short model response.</returns>
+        Task<List<FilmShortModelResponse>> GetWatchLaterFilmAsync(string userName, string token);
+
+        /// <summary>
+        /// Delete watch later film by id.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="userName">User name.</param>
+        /// <param name="idFilm">Film id.</param>
+        Task DeleteWatchLaterFilmUserAsync(int idFilm, string userName, string token);
     }
 }

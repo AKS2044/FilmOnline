@@ -1,5 +1,6 @@
 ﻿using FilmOnline.Web.Interfaces;
 using FilmOnline.Web.Shared.Models;
+using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,139 @@ namespace FilmOnline.Web.Service
         public async Task DeleteUserAsync(string id, string token)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/User/DeleteUser{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+        }
+
+        public async Task AddFavouriteFilmAsync(string userName, int filmId, string token)
+        {
+            UserFilmRequest result = new()
+            {
+                UserName = userName,
+                FilmId = filmId
+            };
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Film/AddFavouriteFilm")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(result), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+        }
+
+            public async Task<List<FilmShortModelResponse>> GetFavouriteFilmAsync(string userName, string token)
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/GetAllFavouriteFilm")
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(userName), Encoding.UTF8, "application/json")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                using var response = await _httpClient.SendAsync(request);
+
+                // throw exception on error response
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                    throw new Exception(error["message"]);
+                }
+
+                var films = await response.Content.ReadFromJsonAsync <List<FilmShortModelResponse>>();
+                return films;
+            }
+        public async Task DeleteFavouriteFilmUserAsync(int idFilm, string userName, string token)
+        {
+            UserFilmRequest result = new()
+            {
+                UserName = userName,
+                FilmId = idFilm
+            };
+            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/Film/DeleteFavouriteFilm")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(result), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+        }
+
+        public async Task AddWatchLaterFilmAsync(string userName, int filmId, string token)
+        {
+            UserFilmRequest result = new()
+            {
+                UserName = userName,
+                FilmId = filmId
+            };
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Film/AddWatchLaterFilm")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(result), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+        }
+
+        public async Task<List<FilmShortModelResponse>> GetWatchLaterFilmAsync(string userName, string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/GetAllWatchLaterFilm")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(userName), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+
+            var films = await response.Content.ReadFromJsonAsync<List<FilmShortModelResponse>>();
+            return films;
+        }
+
+        public async Task DeleteWatchLaterFilmUserAsync(int idFilm, string userName, string token)
+        {
+            UserFilmRequest result = new()
+            {
+                UserName = userName,
+                FilmId = idFilm
+            };
+            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/Film/DeleteWatchLaterFilm")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(result), Encoding.UTF8, "application/json")
+            };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             using var response = await _httpClient.SendAsync(request);

@@ -16,13 +16,17 @@
 
     <div class="profile__box">
         <div class="text__profile">Избранное:</div>
-        <div class="text__profile">@Html.DisplayFor(model => model.Favourite)</div>
+            <a asp-action="Favourite" asp-controller="Account" asp-route-userName="@User.Identity.Name">
+                <div class="text__profile">@Html.DisplayFor(model => model.Favourite)</div>
+            </a>
     </div>
     <div class="profile__border"></div>
 
     <div class="profile__box">
         <div class="text__profile">Смотреть позже:</div>
-        <div class="text__profile">@Html.DisplayFor(model => model.WatchLater)</div>
+            <a asp-action="WatchLater" asp-controller="Account" asp-route-userName="@User.Identity.Name">
+                <div class="text__profile">@Html.DisplayFor(model => model.WatchLater)</div>
+            </a>
     </div>
     <div class="profile__border"></div>
 </form>
