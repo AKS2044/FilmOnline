@@ -1,15 +1,20 @@
 ﻿using FilmOnline.Data.Models;
 using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Models;
+using FilmOnline.Web.Shared.Models;
 using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
 using FilmOnline.WebApi.Attributes;
+using FilmOnline.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
@@ -35,31 +40,18 @@ namespace FilmOnline.WebApi.Controllers
 
         [OwnAuthorize]
         [HttpPost("addfilm")]
-        public async Task<IActionResult> CreateAsync([FromBody] FilmCreateRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] FilmCreateRequest request/*, IFormFile uploadedFile*/)
         {
             var filmActorDtos = new List<FilmActorDto>();
             var filmGenreDtos = new List<FilmGenreDto>();
             var filmCountryDtos = new List<FilmCountryDto>();
             var filmStageManagerDtos = new List<FilmStageManagerDto>();
 
-
-            var idRating = request.IdRating;
-            Uri baseURI = new("https://rating.kinopoisk.ru/");
-            Uri XmlPuth = new(baseURI, $"{idRating}.xml");
-            string xmlStr;
-            WebClient webClient = new();
-            using (WebClient wc = webClient)
-            {
-                xmlStr = wc.DownloadString(XmlPuth);
-            }
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xmlStr);
-
-            XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
-            XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
-            XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
-            string kinopoiskData = kinopoisk.InnerText;
-            string ImdbData = imdb.InnerText;
+            //string path = "/Files/" + uploadedFile.FileName;
+            //using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+            //{
+            //    await uploadedFile.CopyToAsync(fileStream);
+            //}
 
             FilmDto filmDto = new()
             {
@@ -71,12 +63,36 @@ namespace FilmOnline.WebApi.Controllers
                 Time = request.Time,
                 Description = request.Description,
                 IdRating = request.IdRating,
-                RatingImdb = ImdbData,
-                RatingKinopoisk = kinopoiskData,
                 RatingSite = request.RatingSite,
                 LinkFilmtrailer = request.LinkFilmtrailer,
                 LinkFilmPlayer = request.LinkFilmPlayer
             };
+
+            if (request.IdRating != 0)
+            {
+                var idRating = request.IdRating;
+                Uri baseURI = new("https://rating.kinopoisk.ru/");
+                Uri XmlPuth = new(baseURI, $"{idRating}.xml");
+                string xmlStr;
+                WebClient webClient = new();
+                using (WebClient wc = webClient)
+                {
+                    xmlStr = wc.DownloadString(XmlPuth);
+                }
+                var xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(xmlStr);
+
+                XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
+                XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
+                XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
+                string kinopoiskData = kinopoisk.InnerText;
+                if (imdb is not null)
+                {
+                    string ImdbData = imdb.InnerText;
+                    filmDto.RatingImdb = ImdbData;
+                }
+                filmDto.RatingKinopoisk = kinopoiskData;
+            }
 
             foreach (var item in request.ActorIds)
             {
@@ -123,7 +139,7 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("")]
         public async Task<IActionResult> Get(int id)
         {
             var film = await _filmManager.GetByIdAsync(id);
@@ -132,44 +148,17 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpGet("GetUpgrade{id}")]
-        public async Task<IActionResult> GetUpgradeFilm(int id)
-        {
-            var film = await _filmManager.GetByIdForUpgradeAsync(id);
-
-            return Ok(film);
-        }
-
-        [OwnAuthorize]
         [HttpPost("UpgradeFilm")]
-        public async Task<IActionResult> UpgradeFilmAsync([FromBody] FilmCreateRequest request)
+        public async Task<IActionResult> UpgradeFilmAsync([FromBody] FilmUpgradeModel request)
         {
             var filmActorDtos = new List<FilmActorDto>();
             var filmGenreDtos = new List<FilmGenreDto>();
             var filmCountryDtos = new List<FilmCountryDto>();
             var filmStageManagerDtos = new List<FilmStageManagerDto>();
 
-
-            var idRating = request.IdRating;
-            Uri baseURI = new("https://rating.kinopoisk.ru/");
-            Uri XmlPuth = new(baseURI, $"{idRating}.xml");
-            string xmlStr;
-            WebClient webClient = new();
-            using (WebClient wc = webClient)
-            {
-                xmlStr = wc.DownloadString(XmlPuth);
-            }
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xmlStr);
-
-            XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
-            XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
-            XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
-            string kinopoiskData = kinopoisk.InnerText;
-            string ImdbData = imdb.InnerText;
-
             FilmDto filmDto = new()
             {
+                Id = request.Id,
                 ImageName = request.ImageName,
                 PathPoster = request.PathPoster,
                 NameFilms = request.NameFilms,
@@ -178,49 +167,85 @@ namespace FilmOnline.WebApi.Controllers
                 Time = request.Time,
                 Description = request.Description,
                 IdRating = request.IdRating,
-                RatingImdb = ImdbData,
-                RatingKinopoisk = kinopoiskData,
                 RatingSite = request.RatingSite,
                 LinkFilmtrailer = request.LinkFilmtrailer,
                 LinkFilmPlayer = request.LinkFilmPlayer
             };
 
-            foreach (var item in request.ActorIds)
+            if (request.IdRating != 0)
             {
-                filmActorDtos.Add(new FilmActorDto
+                var idRating = request.IdRating;
+                Uri baseURI = new("https://rating.kinopoisk.ru/");
+                Uri XmlPuth = new(baseURI, $"{idRating}.xml");
+                string xmlStr;
+                WebClient webClient = new();
+                using (WebClient wc = webClient)
                 {
-                    ActorId = item
-                });
+                    xmlStr = wc.DownloadString(XmlPuth);
+                }
+                var xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(xmlStr);
+
+                XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
+                XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
+                XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
+                string kinopoiskData = kinopoisk.InnerText;
+                if (imdb is not null)
+                {
+                    string ImdbData = imdb.InnerText;
+                    filmDto.RatingImdb = ImdbData;
+                }
+                filmDto.RatingKinopoisk = kinopoiskData;
             }
 
-            foreach (var item in request.GenreIds)
+            if (request.ActorIds is not null)
             {
-                filmGenreDtos.Add(new FilmGenreDto
+                foreach (var item in request.ActorIds)
                 {
-                    GenreId = item
-                });
+                    filmActorDtos.Add(new FilmActorDto
+                    {
+                        ActorId = item
+                    });
+                }
             }
 
-            foreach (var item in request.CountryIds)
+            if (request.GenreIds is not null)
             {
-                filmCountryDtos.Add(new FilmCountryDto
+                foreach (var item in request.GenreIds)
                 {
-                    CountryId = item
-                });
+                    filmGenreDtos.Add(new FilmGenreDto
+                    {
+                        GenreId = item
+                    });
+                }
             }
 
-            foreach (var item in request.StageManagerIds)
+            if (request.CountryIds is not null)
             {
-                filmStageManagerDtos.Add(new FilmStageManagerDto
+                foreach (var item in request.CountryIds)
                 {
-                    StageManagerId = item
-                });
+                    filmCountryDtos.Add(new FilmCountryDto
+                    {
+                        FilmId = request.Id,
+                        CountryId = item
+                    });
+                }
             }
 
+            if (request.StageManagerIds is not null)
+            {
+                foreach (var item in request.StageManagerIds)
+                {
+                    filmStageManagerDtos.Add(new FilmStageManagerDto
+                    {
+                        StageManagerId = item
+                    });
+                }
+            }
 
             if (ModelState.IsValid)
             {
-                await _filmManager.CreateAsync(filmDto,
+                await _filmManager.UpgradeFilmAsync(filmDto,
                     filmActorDtos,
                     filmGenreDtos,
                     filmCountryDtos,
@@ -259,10 +284,12 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("allFilms")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("Films")]
+        public async Task<IActionResult> GetAll([FromQuery] QueryParameters parametrs)
         {
-            var film = await _filmManager.GetAllShortAsync();
+
+            var film = await _filmManager.GetAllAsync(parametrs.Page);
+
 
             return Ok(film);
         }

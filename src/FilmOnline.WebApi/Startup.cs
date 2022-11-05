@@ -5,6 +5,7 @@ using FilmOnline.Logic.Managers;
 using FilmOnline.Logic.Services;
 using FilmOnline.WebApi.Middlewares;
 using FilmOnline.WebApi.Settings;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,9 @@ namespace FilmOnline.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Custom managers & services
+            services.AddAuthorization();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => options.LoginPath = "/account/login");
             services.AddScoped(typeof(IRepositoryManager<>), typeof(RepositoryManager<>));
             services.AddScoped<IFilmManager, FilmManager>();
             services.AddScoped<IActorManager, ActorManager>();
@@ -117,8 +120,11 @@ namespace FilmOnline.WebApi
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseResponseCompression();
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseHsts();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             // global cors policy
             app.UseCors(x => x

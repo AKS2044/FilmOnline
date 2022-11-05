@@ -3,11 +3,13 @@ using FilmOnline.Logic.Exceptions;
 using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models;
+using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace FilmOnline.Logic.Managers
@@ -64,7 +66,7 @@ namespace FilmOnline.Logic.Managers
             List<FilmGenreDto> filmGenreDto,
             List<FilmCountryDto> filmCountryDto,
             List<FilmStageManagerDto> filmStageManagerDto)
-        {
+        {   
             var film = new Film()
             {
                 NameFilms = filmDto.NameFilms,
@@ -75,22 +77,25 @@ namespace FilmOnline.Logic.Managers
                 PathPoster = filmDto.PathPoster,
                 ImageName = filmDto.ImageName,
                 IdRating = filmDto.IdRating,
-                RatingSite = "0",
+                RatingSite = 0,
                 RatingKinopoisk = filmDto.RatingKinopoisk,
                 RatingImdb = filmDto.RatingImdb,
                 LinkFilmtrailer = filmDto.LinkFilmtrailer,
                 LinkFilmPlayer = filmDto.LinkFilmPlayer
             };
+            if (filmDto.RatingImdb is null)
+            {
+                film.RatingImdb = "0";
+            }
 
             await _filmRepository.CreateAsync(film);
             await _filmRepository.SaveChangesAsync();
 
-            int id = film.Id;
             foreach (var item in filmActorDto)
             {
                 FilmActor filmActor = new()
                 {
-                    FilmId = id,
+                    FilmId = film.Id,
                     ActorId = item.ActorId
                 };
                 await _filmActorRepository.CreateAsync(filmActor);
@@ -100,7 +105,7 @@ namespace FilmOnline.Logic.Managers
             {
                 FilmGenre filmGenre = new()
                 {
-                    FilmId = id,
+                    FilmId = film.Id,
                     GenreId = item.GenreId
                 };
                 await _filmGenreRepository.CreateAsync(filmGenre);
@@ -110,7 +115,7 @@ namespace FilmOnline.Logic.Managers
             {
                 FilmCountry filmCountry = new()
                 {
-                    FilmId = id,
+                    FilmId = film.Id,
                     CountryId = item.CountryId
                 };
                 await _filmCountryRepository.CreateAsync(filmCountry);
@@ -120,7 +125,7 @@ namespace FilmOnline.Logic.Managers
             {
                 FilmStageManager filmStageManager = new()
                 {
-                    FilmId = id,
+                    FilmId = film.Id,
                     StageManagerId = item.StageManagerId
                 };
                 await _filmStageManagerRepository.CreateAsync(filmStageManager);
@@ -134,71 +139,134 @@ namespace FilmOnline.Logic.Managers
            List<FilmCountryDto> filmCountryDto,
            List<FilmStageManagerDto> filmStageManagerDto)
         {
+            var film = await _filmRepository.GetEntityAsync(f => f.Id == filmDto.Id);
 
-            if (true)
+            if (filmDto.NameFilms != film.NameFilms && filmDto.NameFilms is not null)
             {
-
+                film.NameFilms = filmDto.NameFilms;
             }
-            var film = new Film()
-            {
-                NameFilms = filmDto.NameFilms,
-                AgeLimit = filmDto.AgeLimit,
-                ReleaseDate = filmDto.ReleaseDate,
-                Description = filmDto.Description,
-                Time = filmDto.Time,
-                PathPoster = filmDto.PathPoster,
-                ImageName = filmDto.ImageName,
-                IdRating = filmDto.IdRating,
-                RatingSite = "0",
-                RatingKinopoisk = filmDto.RatingKinopoisk,
-                RatingImdb = filmDto.RatingImdb,
-                LinkFilmtrailer = filmDto.LinkFilmtrailer,
-                LinkFilmPlayer = filmDto.LinkFilmPlayer
-            };
 
-            await _filmRepository.CreateAsync(film);
-            await _filmRepository.SaveChangesAsync();
-
-            int id = film.Id;
-            foreach (var item in filmActorDto)
+            if (filmDto.AgeLimit != film.AgeLimit && filmDto.AgeLimit != 0)
             {
-                FilmActor filmActor = new()
+                film.AgeLimit = filmDto.AgeLimit;
+            }
+
+            if (filmDto.ReleaseDate != film.ReleaseDate && filmDto.ReleaseDate != 0)
+            {
+                film.ReleaseDate = filmDto.ReleaseDate;
+            }
+
+            if (filmDto.Description != film.Description && filmDto.Description is not null)
+            {
+                film.Description = filmDto.Description;
+            }
+
+            if (filmDto.Time != film.Time && filmDto.Time != 0)
+            {
+                film.Time = filmDto.Time;
+            }
+
+            if (filmDto.RatingSite != film.RatingSite && filmDto.RatingSite != 0)
+            {
+                film.RatingSite = filmDto.RatingSite;
+            }
+
+            if (filmDto.RatingKinopoisk != film.RatingKinopoisk && filmDto.RatingKinopoisk is not null)
+            {
+                film.RatingKinopoisk = filmDto.RatingKinopoisk;
+            }
+
+            if (filmDto.RatingImdb != film.RatingImdb && filmDto.RatingImdb is not null)
+            {
+                film.RatingImdb = filmDto.RatingImdb;
+            }
+
+            if (filmDto.LinkFilmPlayer != film.LinkFilmPlayer && filmDto.LinkFilmPlayer is not null)
+            {
+                film.LinkFilmPlayer = filmDto.LinkFilmPlayer;
+            }
+
+            if (filmDto.LinkFilmtrailer != film.LinkFilmtrailer && filmDto.LinkFilmtrailer is not null)
+            {
+                film.LinkFilmtrailer = filmDto.LinkFilmtrailer;
+            }
+
+            if (filmDto.ImageName != film.ImageName && filmDto.ImageName is not null)
+            {
+                film.ImageName = filmDto.ImageName;
+            }
+
+            if (filmDto.PathPoster != film.PathPoster && filmDto.PathPoster is not null)
+            {
+                film.PathPoster = filmDto.PathPoster;
+            }
+
+            if (filmDto.IdRating != film.IdRating && filmDto.IdRating != 0)
+            {
+                film.IdRating = filmDto.IdRating;
+            }
+
+            if (filmCountryDto.Count != 0)
+            {
+                var deleteCountry = await _filmCountryRepository.GetAll().Where(d => d.FilmId == film.Id).ToListAsync();
+                _filmCountryRepository.DeleteRange(deleteCountry);
+                foreach (var item in filmCountryDto)
                 {
-                    FilmId = id,
-                    ActorId = item.ActorId
-                };
-                await _filmActorRepository.CreateAsync(filmActor);
+                    FilmCountry filmCountry = new()
+                    {
+                        FilmId = film.Id,
+                        CountryId = item.CountryId
+                    };
+                    await _filmCountryRepository.CreateAsync(filmCountry);
+                }
             }
 
-            foreach (var item in filmGenreDto)
+            if (filmGenreDto.Count != 0)
             {
-                FilmGenre filmGenre = new()
+                var deleteGenre = await _filmGenreRepository.GetAll().Where(d => d.FilmId == film.Id).ToListAsync();
+                _filmGenreRepository.DeleteRange(deleteGenre);
+                foreach (var item in filmGenreDto)
                 {
-                    FilmId = id,
-                    GenreId = item.GenreId
-                };
-                await _filmGenreRepository.CreateAsync(filmGenre);
+                    FilmGenre filmGenre = new()
+                    {
+                        FilmId = film.Id,
+                        GenreId = item.GenreId
+                    };
+                    await _filmGenreRepository.CreateAsync(filmGenre);
+                }
             }
 
-            foreach (var item in filmCountryDto)
+            if (filmStageManagerDto.Count != 0)
             {
-                FilmCountry filmCountry = new()
+                var deleteManager = await _filmStageManagerRepository.GetAll().Where(d => d.FilmId == film.Id).ToListAsync();
+                _filmStageManagerRepository.DeleteRange(deleteManager);
+                foreach (var item in filmStageManagerDto)
                 {
-                    FilmId = id,
-                    CountryId = item.CountryId
-                };
-                await _filmCountryRepository.CreateAsync(filmCountry);
+                    FilmStageManager filmStageManager = new()
+                    {
+                        FilmId = film.Id,
+                        StageManagerId = item.StageManagerId
+                    };
+                    await _filmStageManagerRepository.CreateAsync(filmStageManager);
+                }
             }
 
-            foreach (var item in filmStageManagerDto)
+            if (filmActorDto.Count != 0)
             {
-                FilmStageManager filmStageManager = new()
+                var deleteActor = await _filmActorRepository.GetAll().Where(d => d.FilmId == film.Id).ToListAsync();
+                _filmActorRepository.DeleteRange(deleteActor);
+                foreach (var item in filmActorDto)
                 {
-                    FilmId = id,
-                    StageManagerId = item.StageManagerId
-                };
-                await _filmStageManagerRepository.CreateAsync(filmStageManager);
+                    FilmActor filmActor = new()
+                    {
+                        FilmId = film.Id,
+                        ActorId = item.ActorId
+                    };
+                    await _filmActorRepository.CreateAsync(filmActor);
+                }
             }
+            
+
             await _filmRepository.SaveChangesAsync();
         }
 
@@ -226,7 +294,7 @@ namespace FilmOnline.Logic.Managers
             await _filmRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<FilmDto>> GetAllShortAsync()
+        public async Task<IEnumerable<FilmDto>> GetAllAsync(int page)
         {
             var FilmDtos = new List<FilmDto>();
 
@@ -245,7 +313,11 @@ namespace FilmOnline.Logic.Managers
                     RatingSite = rating
                 });
             }
-            return FilmDtos;
+
+            int pageSize = 2;
+            var items = FilmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return items;
         }
 
         public async Task<IEnumerable<FilmDto>> GetFilmByGenreAsync(int idGenre)
@@ -339,6 +411,7 @@ namespace FilmOnline.Logic.Managers
 
             FilmUpgradeModel model = new()
             {
+                Id = film.Id,
                 NameFilms = film.NameFilms,
                 ImageName = film.ImageName,
                 PathPoster = film.PathPoster,
@@ -348,10 +421,10 @@ namespace FilmOnline.Logic.Managers
                 IdRating = film.IdRating,
                 Time = film.Time,
                 Description = film.Description,
-                ActorIds = actors,
-                GenreIds = genres,
-                CountryIds = countries,
-                StageManagerIds = stageManagers
+                ActorIds = filmActorIds,
+                GenreIds = filmGenreIds,
+                CountryIds = filmCountryIds,
+                StageManagerIds = filmStageManagerIds
             };
 
             return model;

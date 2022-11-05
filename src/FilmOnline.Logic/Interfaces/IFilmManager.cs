@@ -82,8 +82,9 @@ namespace FilmOnline.Logic.Interfaces
         /// <summary>
         /// Get all short information Film.
         /// </summary>
+        /// <param name="page">Page films.</param>
         /// <returns>Film data transfer objects.</returns>
-        Task<IEnumerable<FilmDto>> GetAllShortAsync();
+        Task<IEnumerable<FilmDto>> GetAllAsync(int page);
 
         /// <summary>
         /// Get all short information Film.

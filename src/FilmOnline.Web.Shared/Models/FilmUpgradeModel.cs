@@ -6,6 +6,11 @@ namespace FilmOnline.Web.Shared.Models
     public class FilmUpgradeModel
     {
         /// <summary>
+        /// Film id.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
         /// Name.
         /// </summary>
         public string NameFilms { get; set; }
@@ -20,20 +25,20 @@ namespace FilmOnline.Web.Shared.Models
         /// </summary>
         public int IdRating { get; set; }
 
-        ///// <summary>
-        ///// Rating site.
-        ///// </summary>
-        //public float RatingSite { get; set; }
+        /// <summary>
+        /// Rating site.
+        /// </summary>
+        public float RatingSite { get; set; }
 
         /// <summary>
         /// Release date.
         /// </summary>
         public int ReleaseDate { get; set; }
 
-        ///// <summary>
-        ///// Link for file film.
-        ///// </summary>
-        //public string LinkFilmPlayer { get; set; }
+        /// <summary>
+        /// Link for file film.
+        /// </summary>
+        public string LinkFilmPlayer { get; set; }
 
         /// <summary>
         /// Link for trailer.
@@ -43,22 +48,22 @@ namespace FilmOnline.Web.Shared.Models
         /// <summary>
         /// Country identification.
         /// </summary>
-        public List<string> CountryIds { get; set; }
+        public List<int> CountryIds { get; set; }
 
         /// <summary>
         /// Actor identification.
         /// </summary>
-        public List<Actor> ActorIds { get; set; }
+        public List<int> ActorIds { get; set; }
 
         /// <summary>
         /// Genre identification.
         /// </summary>
-        public List<string> GenreIds { get; set; }
+        public List<int> GenreIds { get; set; }
 
         /// <summary>
         /// Stage manager identification.
         /// </summary>
-        public List<string> StageManagerIds { get; set; }
+        public List<int> StageManagerIds { get; set; }
 
         /// <summary>
         /// Description.

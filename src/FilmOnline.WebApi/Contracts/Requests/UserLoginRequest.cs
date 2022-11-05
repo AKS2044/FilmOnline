@@ -4,17 +4,11 @@ namespace FilmOnline.WebApi.Contracts.Requests
 {
     public class UserLoginRequest
     {
-        ///// <summary>
-        ///// User name.
-        ///// </summary>
-        //[Required]
-        //public string UserName { get; set; }
-
         /// <summary>
-        /// Email.
+        /// User name.
         /// </summary>
         [Required]
-        public string Email { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Password.

@@ -90,24 +90,6 @@ namespace FilmOnline.Web.Service
             return film;
         }
 
-        public async Task<FilmUpgradeModel> GetByIdUpgradeAsync(int id, string token)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/GetUpgrade{id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            using var response = await _httpClient.SendAsync(request);
-
-            // throw exception on error response
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                throw new Exception(error["message"]);
-            }
-
-            var film = await response.Content.ReadFromJsonAsync<FilmUpgradeModel>();
-            return film;
-        }
-
         public async Task<FilmShortModelResponse> GetByNameAsync(string name)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/Film/name")

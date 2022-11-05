@@ -4,7 +4,7 @@
 }
 
 <div class="main__addFilm">
-    <form asp-controller="Film" asp-action="AddFilms" method="post" enctype="multipart/form-data">
+    <form asp-controller="Film" asp-action="UpgradePost" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
         <div class="addFilm__block">
             <label asp-for="NameFilms" class="mine__form">Название Фильма:</label>
             <input type="text" asp-for="NameFilms" class="mine__input" />
@@ -13,10 +13,6 @@
             <label asp-for="ReleaseDate" class="mine__form">Год:</label>
             <input type="number" asp-for="ReleaseDate" class="mine__input" />
         </div>
-        @*<div class="addFilm__block">
-                <label asp-for="RatingSite" class="mine__form">Рейтинг сайта:</label>
-                <input type="text" asp-for="RatingSite" class="mine__input" />
-            </div>*@
         <div class="addFilm__block">
             <label asp-for="IdRating" class="mine__form">Ид рейтинга кинопоиска:</label>
             <input type="number" asp-for="IdRating" class="mine__input" />
@@ -41,10 +37,6 @@
             <label asp-for="CountryIds" class="mine__form">Страны:</label>
             <div class="block-list list-country" id="id__country">
                 <select asp-for="CountryIds" class="select__add" asp-items="ViewBag.AddCountry" multiple size="15">
-                    @foreach (var item in Model.CountryIds)
-                    {
-                        <option disabled>@item</option>
-                    }
                 </select>
             </div>
         </div>
@@ -56,11 +48,6 @@
                     {
                         <option value="@item.Id">@item.FirstName @item.LastName</option>
                     }
-
-                    @foreach (var item in Model.ActorIds)
-                    {
-                        <option disabled>@item.FirstName @item.LastName</option>
-                    }
                 </select>
             </div>
         </div>
@@ -68,20 +55,16 @@
             <label asp-for="GenreIds" class="mine__form">Жанры:</label>
             <div class="block-list list-genre">
                 <select asp-for="GenreIds" class="select__add" asp-items="ViewBag.AddGenres" multiple size="15">
-                    @foreach (var item in Model.GenreIds)
-                    {
-                        <option disabled>@item</option>
-                    }
                 </select>
             </div>
         </div>
         <div class="addFilm__block">
             <label asp-for="StageManagerIds" class="mine__form">Режиссер:</label>
             <select asp-for="StageManagerIds" class="select__add" asp-items="ViewBag.AddManager" multiple size="15">
-                @foreach (var item in Model.StageManagerIds)
+                @*@foreach (var item in Model.StageManagerIds)
                 {
                     <option disabled>@item</option>
-                }
+                }*@
             </select>
         </div>
         <div class="addFilm__block">

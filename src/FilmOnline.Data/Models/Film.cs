@@ -55,7 +55,7 @@ namespace FilmOnline.Data.Models
         /// <summary>
         /// Rating site.
         /// </summary>
-        public string RatingSite { get; set; }
+        public float RatingSite { get; set; }
 
         /// <summary>
         /// Rating kinopoisk.

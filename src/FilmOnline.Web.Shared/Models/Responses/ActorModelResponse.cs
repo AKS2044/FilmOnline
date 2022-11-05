@@ -21,5 +21,5 @@
         /// Second name.
         /// </summary>
         public string SecondName { get; set; }
-    }
+}
 }

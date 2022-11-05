@@ -1,5 +1,6 @@
 ﻿using FilmOnline.Web.Interfaces;
 using FilmOnline.Web.Shared.Models;
+using FilmOnline.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -60,11 +61,23 @@ namespace FilmOnline.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoginAsync(UserLoginRequest request)
         {
+            var filmCollection = await _filmService.GetAllShortAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
+            var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
+
+            ViewBag.RandomFilm = resultRandomFilm.Id;
+            ViewBag.Genres = genreCollection;
+            ViewBag.Films = filmCollection.Take(7);
             request = request ?? throw new ArgumentNullException(nameof(request));
 
             if (ModelState.IsValid)
             {
                 var (roles, userName, token) = await _identityService.LoginAsync(request);
+                if (userName is null)
+                {
+                    ModelState.AddModelError("", "Неправильный логин и(или) пароль");
+                    return View(request);
+                }
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userName),
@@ -87,7 +100,7 @@ namespace FilmOnline.Web.Controllers
 
             // UNDONE: ModelError
 
-            return View(request);
+            return View();
         }
 
         /// <summary>
@@ -120,16 +133,40 @@ namespace FilmOnline.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterAsync(UserRegistationRequest request)
         {
+            var filmCollection = await _filmService.GetAllShortAsync();
+            var genreCollection = await _genreService.GetAllGenreAsync();
+            var resultRandomFilm = await _filmService.GetRandomFilmByIdAsync();
+
+            ViewBag.RandomFilm = resultRandomFilm.Id;
+            ViewBag.Genres = genreCollection;
+            ViewBag.Films = filmCollection.Take(7);
             request = request ?? throw new ArgumentNullException(nameof(request));
+            var checkEmail = await _identityService.CheckEmailAsync(request.Email);
+            var checkName = await _identityService.CheckNameAsync(request.UserName);
+            bool checkPassword = request.Password != request.PasswordConfirm;
 
-            if (ModelState.IsValid)
+            if (checkEmail || checkPassword || checkName)
             {
-                await _identityService.RegisterAsync(request);
+                if (checkEmail)
+                {
+                    ModelState.AddModelError("", "Email уже существует");
+                }
+                
+                if (checkPassword)
+                {
+                    ModelState.AddModelError("", "Пароли не совподают");
+                }
 
-                return RedirectToAction("Index", "Home");
+                if (checkName)
+                {
+                    ModelState.AddModelError("", "Login уже существует");
+                }
+                return View(request);
             }
 
-            return View(request);
+            await _identityService.RegisterAsync(request);
+
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>

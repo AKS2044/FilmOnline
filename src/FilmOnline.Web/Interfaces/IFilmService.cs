@@ -52,14 +52,6 @@ namespace FilmOnline.Web.Interfaces
         Task<FilmModelResponse> GetByIdAsync(int id);
 
         /// <summary>
-        /// Get film by id for upgrade.
-        /// </summary>
-        /// <param name="id">Film id.</param>
-        /// <param name="token">Jwt token.</param>
-        /// <returns>Film.</returns>
-        Task<FilmUpgradeModel> GetByIdUpgradeAsync(int id, string token);
-
-        /// <summary>
         /// Get random film by id.
         /// </summary>
         /// <returns>Film collection.</returns>

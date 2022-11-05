@@ -10,19 +10,19 @@
         <div asp-validation-summary="ModelOnly"></div>
         <div class="registration__block">
             <label class="mine__form" asp-for="Email"></label><br />
-            <input class="mine__input" asp-for="Email" />
+            <input class="mine__input" asp-for="Email" type="email" required />
         </div>
         <div class="registration__block">
             <label class="mine__form" asp-for="UserName"></label><br />
-            <input class="mine__input" asp-for="UserName" />
+            <input class="mine__input" asp-for="UserName" required />
         </div>
         <div class="registration__block">
             <label class="mine__form" asp-for="Password"></label><br />
-            <input class="mine__input" asp-for="Password" />
+            <input class="mine__input" asp-for="Password" type="password" required />
         </div>
         <div class="registration__block">
             <label class="mine__form" asp-for="PasswordConfirm"></label><br />
-            <input class="mine__input" asp-for="PasswordConfirm" />
+            <input class="mine__input" asp-for="PasswordConfirm" type="password" required />
         </div>
         <div>
             <input class="mine__button" type="submit" value="Регистрация" />

@@ -27,5 +27,15 @@ namespace FilmOnline.WebApi.Contracts.Requests
         /// </summary>
         [Required]
         public string PasswordConfirm { get; set; }
+
+        /// <summary>
+        /// Path to file.
+        /// </summary>
+        public string PathPhoto { get; set; }
+
+        /// <summary>
+        /// Photo name.
+        /// </summary>
+        public string PhotoName { get; set; }
     }
 }

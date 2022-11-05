@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FilmOnline.Web.Shared.Models;
 
 namespace FilmOnline.Web.Controllers
 {
@@ -161,8 +162,6 @@ namespace FilmOnline.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Upgrade(int id)
         {
-            var token = User.FindFirst(ClaimTypes.CookiePath).Value;
-
             var filmCollection = await _filmService.GetAllShortAsync();
             var genreCollection = await _genreService.GetAllGenreAsync();
             var countryCollection = await _countryService.GetAllCountryAsync();
@@ -178,7 +177,7 @@ namespace FilmOnline.Web.Controllers
             ViewBag.Genres = genreCollection;
             ViewBag.Films = filmCollection.Take(7);
 
-            var result = await _filmService.GetByIdUpgradeAsync(id, token);
+            var result = await _filmService.GetByIdAsync(id);
 
             return View(result);
         }
@@ -189,20 +188,24 @@ namespace FilmOnline.Web.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> UpgradePost(FilmCreateRequest model, IFormFile uploadedFile)
+        public async Task<IActionResult> UpgradePost(FilmUpgradeModel model, int id, IFormFile uploadedFile) //Доделать загрузку постера и удаление старого при загрзке нового
         {
             model = model ?? throw new ArgumentNullException(nameof(model));
-            var token = User.FindFirst(ClaimTypes.Name).Value;
-            string path = "/Files/" + uploadedFile.FileName;
-            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+            var token = User.FindFirst(ClaimTypes.CookiePath).Value;
+            if (uploadedFile is not null)
             {
-                await uploadedFile.CopyToAsync(fileStream);
+                string path = "/Files/" + uploadedFile.FileName;
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await uploadedFile.CopyToAsync(fileStream);
+                }
+                model.PathPoster = path;
+                model.ImageName = uploadedFile.FileName;
             }
 
             var request = new FilmCreateRequest
             {
-                ImageName = uploadedFile.FileName,
-                PathPoster = path,
+                Id = id,
                 NameFilms = model.NameFilms,
                 AgeLimit = model.AgeLimit,
                 Time = model.Time,

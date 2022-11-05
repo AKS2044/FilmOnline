@@ -2,6 +2,7 @@
 using FilmOnline.Web.Shared.Models;
 using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
+using FilmOnline.Web.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -72,7 +73,7 @@ namespace FilmOnline.Web.Service
 
             using var response = await _httpClient.SendAsync(request);
 
-            // throw exception on error response
+            //throw exception on error response
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
@@ -84,7 +85,7 @@ namespace FilmOnline.Web.Service
             return (record.Roles, record.UserName, record.Token);
         }
 
-        public async Task<(string Email, string Password, string PasswordConfirm)> RegisterAsync(object value)
+        public async Task<(string email, string userName, string password, string passwordConfirm)> RegisterAsync(object value)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "api/user/registration")
             {
@@ -102,7 +103,7 @@ namespace FilmOnline.Web.Service
 
             var record = await response.Content.ReadFromJsonAsync<UserRegModel>();
 
-            return (record.Email, record.Password, record.PasswordConfirm);
+            return (record.Email, record.UserName, record.Password, record.PasswordConfirm);
         }
 
         public async Task DeleteUserAsync(string id, string token)
@@ -143,26 +144,26 @@ namespace FilmOnline.Web.Service
             }
         }
 
-            public async Task<List<FilmShortModelResponse>> GetFavouriteFilmAsync(string userName, string token)
+        public async Task<List<FilmShortModelResponse>> GetFavouriteFilmAsync(string userName, string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/GetAllFavouriteFilm")
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/Film/GetAllFavouriteFilm")
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(userName), Encoding.UTF8, "application/json")
-                };
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                Content = new StringContent(JsonSerializer.Serialize(userName), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                using var response = await _httpClient.SendAsync(request);
+            using var response = await _httpClient.SendAsync(request);
 
-                // throw exception on error response
-                if (!response.IsSuccessStatusCode)
-                {
-                    var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                    throw new Exception(error["message"]);
-                }
-
-                var films = await response.Content.ReadFromJsonAsync <List<FilmShortModelResponse>>();
-                return films;
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
             }
+
+            var films = await response.Content.ReadFromJsonAsync<List<FilmShortModelResponse>>();
+            return films;
+        }
         public async Task DeleteFavouriteFilmUserAsync(int idFilm, string userName, string token)
         {
             UserFilmRequest result = new()
@@ -251,6 +252,46 @@ namespace FilmOnline.Web.Service
                 var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 throw new Exception(error["message"]);
             }
+        }
+
+        public async Task<bool> CheckEmailAsync(string email)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/User/CheckUserEmail")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(email), Encoding.UTF8, "application/json")
+            };
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<Boolean>();
+
+            return result;
+        }
+
+        public async Task<bool> CheckNameAsync(string name)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/User/CheckUserName")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(name), Encoding.UTF8, "application/json")
+            };
+            using var response = await _httpClient.SendAsync(request);
+
+            // throw exception on error response
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                throw new Exception(error["message"]);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<Boolean>();
+
+            return result;
         }
     }
 }

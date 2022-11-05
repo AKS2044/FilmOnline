@@ -26,5 +26,15 @@
         /// Later see.
         /// </summary>
         public int WatchLater { get; set; }
+
+        /// <summary>
+        /// Path to file.
+        /// </summary>
+        public string PathPhoto { get; set; }
+
+        /// <summary>
+        /// Photo name.
+        /// </summary>
+        public string PhotoName { get; set; }
     }
 }

@@ -9,12 +9,12 @@
     <form method="post" asp-controller="Account" asp-action="Login" asp-antiforgery="true">
         <div asp-validation-summary="All"></div>
         <div class="registration__block">
-            <label class="mine__form" asp-for="Email"></label><br />
-            <input class="mine__input" asp-for="Email" />
+            <label class="mine__form" asp-for="UserName"></label><br />
+            <input class="mine__input" asp-for="UserName" type="text" required />
         </div>
         <div class="registration__block">
             <label class="mine__form" asp-for="Password"></label><br />
-            <input class="mine__input" asp-for="Password" />
+            <input class="mine__input" asp-for="Password" type="password" required />
         </div>
         <div class="registration__block">
             <label class="mine__form" asp-for="RememberMe"></label><br />

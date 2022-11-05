@@ -6,6 +6,12 @@ namespace FilmOnline.Web.Shared.Models.Request
     public class FilmCreateRequest
     {
         /// <summary>
+        /// Film id.
+        /// </summary>
+        [Required]
+        public int Id { get; set; }
+
+        /// <summary>
         /// Name.
         /// </summary>
         [Required]

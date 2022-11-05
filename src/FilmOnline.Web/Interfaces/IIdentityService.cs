@@ -20,7 +20,7 @@ namespace FilmOnline.Web.Interfaces
         /// </summary>
         /// <param name="value">Object.</param>
         /// <returns>Jwt token.</returns>
-        Task<(string Email, string Password, string PasswordConfirm)> RegisterAsync(object value);
+        Task<(string email, string userName, string password, string passwordConfirm)> RegisterAsync(object value);
 
         /// <summary>
         /// Get user profile by id.
@@ -43,6 +43,18 @@ namespace FilmOnline.Web.Interfaces
         /// <param name="token">Jwt token.</param>
         /// <param name="Id">User id.</param>
         Task DeleteUserAsync(string Id, string token);
+
+        /// <summary>
+        /// Check user email.
+        /// </summary>
+        /// <param name="email">User Email.</param>
+        Task<bool> CheckEmailAsync(string email);
+
+        /// <summary>
+        /// Check user name.
+        /// </summary>
+        /// <param name="name">User name.</param>
+        Task<bool> CheckNameAsync(string name);
 
         /// <summary>
         /// Add favourite film by user.
