@@ -38,20 +38,14 @@ namespace FilmOnline.WebApi.Controllers
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        [OwnAuthorize]
+        //[OwnAuthorize]
         [HttpPost("addfilm")]
-        public async Task<IActionResult> CreateAsync([FromBody] FilmCreateRequest request/*, IFormFile uploadedFile*/)
+        public async Task<IActionResult> CreateAsync(/*[FromBody]*/ FilmCreateRequest request)
         {
             var filmActorDtos = new List<FilmActorDto>();
             var filmGenreDtos = new List<FilmGenreDto>();
             var filmCountryDtos = new List<FilmCountryDto>();
             var filmStageManagerDtos = new List<FilmStageManagerDto>();
-
-            //string path = "/Files/" + uploadedFile.FileName;
-            //using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-            //{
-            //    await uploadedFile.CopyToAsync(fileStream);
-            //}
 
             FilmDto filmDto = new()
             {
@@ -292,6 +286,26 @@ namespace FilmOnline.WebApi.Controllers
 
 
             return Ok(film);
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            try
+            {
+                string path = "/Files/" + file.FileName;
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+
+                    return Ok(file.FileName);
+                }
+            }
+            catch (Exception err)
+            {
+
+                return BadRequest(new { message = "Не удалось загрузить файл: " + err });
+            }
         }
 
         [HttpGet("randomFilmId")]

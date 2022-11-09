@@ -88,6 +88,11 @@ namespace FilmOnline.Logic.Managers
                 film.RatingImdb = "0";
             }
 
+            if (filmDto.RatingKinopoisk is null)
+            {
+                film.RatingKinopoisk = "0";
+            }
+
             await _filmRepository.CreateAsync(film);
             await _filmRepository.SaveChangesAsync();
 

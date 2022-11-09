@@ -71,6 +71,12 @@ namespace FilmOnline.WebApi.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> RegistrationAsync(UserRegistationRequest request)
         {
+            var checkName = await _userManager.FindByNameAsync(request.UserName);
+            var checkEmail = await _userManager.FindByNameAsync(request.UserName);
+            if (checkName is not null && checkEmail is not null)
+            {
+                return BadRequest(new { message = "Данный логин или емейл заняты" });
+            }
             var user = new User
             {
                 Email = request.Email,

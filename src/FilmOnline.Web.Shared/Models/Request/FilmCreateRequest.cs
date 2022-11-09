@@ -8,7 +8,7 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// <summary>
         /// Film id.
         /// </summary>
-        [Required]
+        //[Required]
         public int Id { get; set; }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// <summary>
         /// Rating site.
         /// </summary>
-        [Required]
+        //[Required]
         public float RatingSite { get; set; }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// <summary>
         /// Description.
         /// </summary>
-        [Required]
+        // [Required]
         public string Description { get; set; }
 
         /// <summary>
