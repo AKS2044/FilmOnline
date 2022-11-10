@@ -20,7 +20,7 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpPost("addGenre")]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] GenreCreateRequest request)
         {
             GenreDto genreDto = new()
@@ -36,7 +36,7 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("allGenre")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllGenre()
         {
             var genres = await _genreManager.GetAllAsync();
@@ -45,14 +45,14 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _genreManager.DeleteAsync(id);
         }
 
         [OwnAuthorize]
-        [HttpPut("{id}")]
+        [HttpPut("")]
         public async Task UpdateGenreAsync(GenreDto genreDto, int id)
         {
             GenreDto result = new()

@@ -20,7 +20,7 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpPost("addStageManager")]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] StageManagerCreateRequest request)
         {
             StageManagerDto stageManagerDto = new()
@@ -36,7 +36,7 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("allStageManager")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllActor()
         {
             var countries = await _stageManagerManager.GetAllAsync();
@@ -45,14 +45,14 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _stageManagerManager.DeleteAsync(id);
         }
 
         [OwnAuthorize]
-        [HttpPut("{id}")]
+        [HttpPut("")]
         public async Task UpdateStageManagerAsync(StageManagerDto stageManagerDto, int id)
         {
             StageManagerDto result = new()

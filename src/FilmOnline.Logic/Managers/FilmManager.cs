@@ -289,12 +289,17 @@ namespace FilmOnline.Logic.Managers
             var genresDelete = await _filmGenreRepository.GetAll().Where(a => a.FilmId == id).ToListAsync();
             var stageManagersDelete = await _filmStageManagerRepository.GetAll().Where(a => a.FilmId == id).ToListAsync();
             var ratingsDelete = await _filmRatingRepository.GetAll().Where(a => a.FilmId == id).ToListAsync();
+            var favouriteDelete = await _userFavouriteFilmRepository.GetAll().Where(a => a.FilmId == id).ToListAsync();
+            var laterDelete = await _userWatchLaterFilmRepository.GetAll().Where(a => a.FilmId == id).ToListAsync();
 
             _filmRatingRepository.DeleteRange(ratingsDelete);
             _filmStageManagerRepository.DeleteRange(stageManagersDelete);
             _filmGenreRepository.DeleteRange(genresDelete);
             _filmCountryRepository.DeleteRange(countriesDelete);
             _filmActorRepository.DeleteRange(actorsDelete);
+            _userFavouriteFilmRepository.DeleteRange(favouriteDelete);
+            _userWatchLaterFilmRepository.DeleteRange(laterDelete);
+
             _filmRepository.Delete(filmDelete);
             await _filmRepository.SaveChangesAsync();
         }

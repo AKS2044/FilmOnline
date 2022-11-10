@@ -332,7 +332,7 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpDelete("DeleteFilm{id}")]
+        [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _filmManager.DeleteAsync(id);

@@ -20,7 +20,7 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpPost("addCountry")]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] CountryCreateRequest request)
         {
             StateDto stateDto = new()
@@ -36,7 +36,7 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("allCountry")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllActor()
         {
             var countries = await _countryManager.GetAllAsync();
@@ -45,14 +45,14 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _countryManager.DeleteAsync(id);
         }
 
         [OwnAuthorize]
-        [HttpPut("{id}")]
+        [HttpPut("")]
         public async Task UpdateCountryAsync(StateDto stateDto, int id)
         {
             StateDto result = new()

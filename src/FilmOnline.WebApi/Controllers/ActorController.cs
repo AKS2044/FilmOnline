@@ -20,7 +20,7 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpPost("addActor")]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] ActorCreateRequest request)
         {
             ActorDto actorDto = new()
@@ -38,7 +38,7 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("allActor")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllActor()
         {
             var actors = await _actorManager.GetAllAsync();
@@ -47,14 +47,14 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [OwnAuthorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _actorManager.DeleteAsync(id);
         }
 
         [OwnAuthorize]
-        [HttpPut("{id}")]
+        [HttpPut("")]
         public async Task UpdateActorAsync(ActorDto actorDto, int id)
         {
             ActorDto result = new()
