@@ -17,4 +17,8 @@
     <ProjectReference Include="..\FilmOnline.Web.Shared\FilmOnline.Web.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\UserPhoto\" />
+  </ItemGroup>
+
 </Project>

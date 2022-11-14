@@ -6,6 +6,7 @@ using FilmOnline.WebApi.Contracts.Responses;
 using FilmOnline.WebApi.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -27,6 +29,7 @@ namespace FilmOnline.WebApi.Controllers
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        public readonly IWebHostEnvironment _appEnvironment;
         private readonly IJwtService _jwtService;
         private readonly AppSettings _appSettings;
         private readonly IFilmManager _filmManager;
@@ -36,12 +39,14 @@ namespace FilmOnline.WebApi.Controllers
             UserManager<User> userManager,
             IJwtService jwtService,
             IOptions<AppSettings> appSettings,
+            IWebHostEnvironment appEnvironment,
             IFilmManager filmManager)
         {
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
             _filmManager = filmManager ?? throw new ArgumentNullException(nameof(filmManager));
+            _appEnvironment = appEnvironment ?? throw new ArgumentNullException(nameof(appEnvironment));
 
             if (appSettings is null)
             {
@@ -73,6 +78,7 @@ namespace FilmOnline.WebApi.Controllers
         {
             var checkName = await _userManager.FindByNameAsync(request.UserName);
             var checkEmail = await _userManager.FindByNameAsync(request.UserName);
+            DateTime dateReg = DateTime.Now;
             if (checkName is not null && checkEmail is not null)
             {
                 return BadRequest(new { message = "Данный логин или емейл заняты" });
@@ -80,7 +86,9 @@ namespace FilmOnline.WebApi.Controllers
             var user = new User
             {
                 Email = request.Email,
+                DateReg = dateReg.ToLongDateString(),
                 UserName = request.UserName,
+                City = request.City,
                 PathPhoto = request.PathPhoto,
                 PhotoName = request.PhotoName
             };
@@ -96,6 +104,28 @@ namespace FilmOnline.WebApi.Controllers
             var response = new AuthenticateResponse(user, token, userRoles);
 
             return Ok(response);
+        }
+
+        [HttpPost("uploadPhoto")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            string name = "test";
+            Directory.CreateDirectory($"/UserPhoto/{name}/");
+            try
+            {
+                string path = $"/UserPhoto/{name}/" + file.FileName;
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+
+                    return Ok(path);
+                }
+            }
+            catch (Exception err)
+            {
+
+                return BadRequest(new { message = "Не удалось загрузить файл: " + err });
+            }
         }
 
         [HttpPost("logout")]
@@ -138,29 +168,50 @@ namespace FilmOnline.WebApi.Controllers
             }
         }
 
-        [HttpGet("userProfile")]
-        public async Task<IActionResult> ProfileAsync([FromBody] string userName)
+        [HttpGet("profile")]
+        public async Task<IActionResult> ProfileAsync()
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            string token = Request.Headers["Authorization"];
 
-            if (user is null)
+            if (token is not null)
             {
-                return NotFound(user);
+                try
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+
+                    var user = await _userManager.FindByIdAsync(id);
+                    int totalWatchLater = await _filmManager.TotalAllWatchLaterFilmAsync(user.Id);
+                    int totalFavourite = await _filmManager.TotalAllFavouriteFilmAsync(user.Id);
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    ProfileUserResponse response = new()
+                    {
+                        DateReg = user.DateReg,
+                        Email = user.Email,
+                        City = user.City,
+                        Roles = userRoles,
+                        UserName = user.UserName,
+                        WatchLater = totalWatchLater,
+                        Favourite = totalFavourite,
+                        PathPhoto = user.PathPhoto,
+                        PhotoName = user.PhotoName
+                    };
+
+                    return Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
             }
-            int totalWatchLater = await _filmManager.TotalAllWatchLaterFilmAsync(user.Id);
-            int totalFavourite = await _filmManager.TotalAllFavouriteFilmAsync(user.Id);
-            ProfileUserResponse model = new()
+            else
             {
-                Id = user.Id,
-                Email = user.Email,
-                UserName = user.UserName,
-                WatchLater = totalWatchLater,
-                Favourite = totalFavourite,
-                PathPhoto = user.PathPhoto,
-                PhotoName = user.PhotoName
+                return NotFound(new { message = "Пользователь не найден" });
             };
-
-            return Ok(model);
         }
 
         [HttpGet("allUsers")]

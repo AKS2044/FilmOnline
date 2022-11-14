@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace FilmOnline.Data.Models
@@ -14,6 +15,16 @@ namespace FilmOnline.Data.Models
         /// Photo name.
         /// </summary>
         public string PhotoName { get; set; }
+
+        /// <summary>
+        /// City.
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// Date registration.
+        /// </summary>
+        public string DateReg { get; set; }
 
         /// <summary>
         /// Navigation property for UserFavouriteFilms.
