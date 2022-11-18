@@ -4,8 +4,6 @@ using FilmOnline.Web.Shared.Models.Responses;
 using FilmOnline.WebApi.Contracts.Requests;
 using FilmOnline.WebApi.Contracts.Responses;
 using FilmOnline.WebApi.Settings;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,8 +15,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FilmOnline.WebApi.Controllers
@@ -77,7 +73,7 @@ namespace FilmOnline.WebApi.Controllers
         public async Task<IActionResult> RegistrationAsync(UserRegistationRequest request)
         {
             var checkName = await _userManager.FindByNameAsync(request.UserName);
-            var checkEmail = await _userManager.FindByNameAsync(request.UserName);
+            var checkEmail = await _userManager.FindByEmailAsync(request.Email);
             DateTime dateReg = DateTime.Now;
             if (checkName is not null && checkEmail is not null)
             {
@@ -98,7 +94,6 @@ namespace FilmOnline.WebApi.Controllers
                 await _userManager.CreateAsync(user, request.Password);
                 await _userManager.AddToRoleAsync(user, "User");
             }
-
             var token = _jwtService.GenerateJwtToken(user.Id, _appSettings.Secret);
             var userRoles = await _userManager.GetRolesAsync(user);
             var response = new AuthenticateResponse(user, token, userRoles);
@@ -109,23 +104,45 @@ namespace FilmOnline.WebApi.Controllers
         [HttpPost("uploadPhoto")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            string name = "test";
-            Directory.CreateDirectory($"/UserPhoto/{name}/");
-            try
-            {
-                string path = $"/UserPhoto/{name}/" + file.FileName;
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
+            string token = Request.Headers["Authorization"];
 
-                    return Ok(path);
+            if (token is not null)
+            {
+                try
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+                    var user = await _userManager.FindByIdAsync(id);
+
+                    string path2 = _appEnvironment.WebRootPath;
+                    Directory.CreateDirectory($"{path2}/UserPhoto/{user.UserName}");
+                    string path = $"/UserPhoto/{user.UserName}/" + file.FileName;
+
+                    if (user.PathPhoto != path)
+                    {
+                        user.PhotoName = file.FileName;
+                        user.PathPhoto = path;
+                        await _userManager.UpdateAsync(user);
+                    }
+                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+
+                        return Ok(path);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = "Не удалось загрузить файл: " + ex.Message });
                 }
             }
-            catch (Exception err)
+            else
             {
-
-                return BadRequest(new { message = "Не удалось загрузить файл: " + err });
-            }
+                return NotFound(new { message = "Пользователь не найден" });
+            };
         }
 
         [HttpPost("logout")]
@@ -138,7 +155,6 @@ namespace FilmOnline.WebApi.Controllers
         [HttpGet("auth")]
         public async Task<IActionResult> Auth()
         {
-            
             string token = Request.Headers["Authorization"];
 
             if (token is not null)
@@ -169,21 +185,13 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [HttpGet("profile")]
-        public async Task<IActionResult> ProfileAsync()
+        public async Task<IActionResult> ProfileAsync(string userName)
         {
-            string token = Request.Headers["Authorization"];
-
-            if (token is not null)
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user is not null)
             {
                 try
                 {
-                    var handler = new JwtSecurityTokenHandler();
-                    token = token.Replace("Bearer ", "");
-                    var jsonToken = handler.ReadToken(token);
-                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
-                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
-
-                    var user = await _userManager.FindByIdAsync(id);
                     int totalWatchLater = await _filmManager.TotalAllWatchLaterFilmAsync(user.Id);
                     int totalFavourite = await _filmManager.TotalAllFavouriteFilmAsync(user.Id);
                     var userRoles = await _userManager.GetRolesAsync(user);
@@ -226,21 +234,15 @@ namespace FilmOnline.WebApi.Controllers
                 {
                     Id = item.Id,
                     Email = item.Email,
-                    UserName = item.UserName
+                    UserName = item.UserName,
+                    PathPhoto = item.PathPhoto,
+                    PhotoName= item.PhotoName,
+                    City = item.City, 
+                    DateReg = item.DateReg,
                 });
             }
 
             return Ok(userResponses);
-        }
-
-        [HttpGet("getToken")]
-        public async Task<IActionResult> GetTokenAsync(UserLoginRequest model)
-        {
-                var user = await _userManager.FindByEmailAsync(model.UserName);
-                var token = _jwtService.GenerateJwtToken(user.Id, _appSettings.Secret);
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var response = new AuthenticateResponse(user, token, userRoles);
-                return Ok(response);
         }
 
         [HttpDelete("DeleteUser{id}")]
