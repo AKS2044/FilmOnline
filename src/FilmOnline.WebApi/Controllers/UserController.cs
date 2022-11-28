@@ -74,11 +74,17 @@ namespace FilmOnline.WebApi.Controllers
         {
             var checkName = await _userManager.FindByNameAsync(request.UserName);
             var checkEmail = await _userManager.FindByEmailAsync(request.Email);
-            DateTime dateReg = DateTime.Now;
-            if (checkName is not null && checkEmail is not null)
+
+            if (checkName is not null || checkEmail is not null)
             {
                 return BadRequest(new { message = "Данный логин или емейл заняты" });
             }
+            if (request.Password.Length < 6)
+            {
+                return BadRequest(new { message = "Данный пароль слишком короткий" });
+            }
+
+            DateTime dateReg = DateTime.Now;
             var user = new User
             {
                 Email = request.Email,

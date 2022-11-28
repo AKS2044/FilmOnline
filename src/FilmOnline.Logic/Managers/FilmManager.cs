@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace FilmOnline.Logic.Managers
@@ -328,6 +327,27 @@ namespace FilmOnline.Logic.Managers
             var items = FilmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             return items;
+        }
+
+        public async Task<IEnumerable<FilmDto>> GetSliderAsync()
+        {
+            var FilmDtos = new List<FilmDto>();
+
+            var films = await _filmRepository
+                .GetAll().ToListAsync();
+
+            foreach (var item in films)
+            {
+                FilmDtos.Add(new FilmDto
+                {
+                    Id = item.Id,
+                    NameFilms = item.NameFilms,
+                    ReleaseDate = item.ReleaseDate,
+                    PathPoster = item.PathPoster,
+                });
+            }
+
+            return FilmDtos.Take(20);
         }
 
         public async Task<IEnumerable<FilmDto>> GetFilmByGenreAsync(int idGenre)

@@ -284,6 +284,14 @@ namespace FilmOnline.WebApi.Controllers
 
             var film = await _filmManager.GetAllAsync(parametrs.Page);
 
+            return Ok(film);
+        }
+
+        [HttpGet("slider")]
+        public async Task<IActionResult> SliderFilms()
+        {
+
+            var film = await _filmManager.GetSliderAsync();
 
             return Ok(film);
         }

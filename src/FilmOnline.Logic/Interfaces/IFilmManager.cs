@@ -87,6 +87,12 @@ namespace FilmOnline.Logic.Interfaces
         Task<IEnumerable<FilmDto>> GetAllAsync(int page);
 
         /// <summary>
+        /// Get films for slider.
+        /// </summary>
+        /// <returns>Film data transfer objects.</returns>
+        Task<IEnumerable<FilmDto>> GetSliderAsync();
+
+        /// <summary>
         /// Get all short information Film.
         /// </summary>
         Task AddScoreFilmAsync(int idFilm, int score);

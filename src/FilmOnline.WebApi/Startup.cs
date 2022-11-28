@@ -43,6 +43,7 @@ namespace FilmOnline.WebApi
 
             services.AddIdentity<User, IdentityRole>(opts =>
             {
+                opts.Password.RequiredLength = 6;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
