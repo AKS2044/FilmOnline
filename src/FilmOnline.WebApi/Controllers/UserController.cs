@@ -1,6 +1,7 @@
 ﻿using FilmOnline.Data.Models;
 using FilmOnline.Logic.Interfaces;
 using FilmOnline.Web.Shared.Models.Responses;
+using FilmOnline.WebApi.Attributes;
 using FilmOnline.WebApi.Contracts.Requests;
 using FilmOnline.WebApi.Contracts.Responses;
 using FilmOnline.WebApi.Settings;
@@ -189,33 +190,35 @@ namespace FilmOnline.WebApi.Controllers
                 return NotFound(new { message = "Пользователь не найден" });
             }
         }
-
+        [OwnAuthorize]
         [HttpGet("profile")]
-        public async Task<IActionResult> ProfileAsync(string userName)
+        public async Task<IActionResult> ProfileAsync()
         {
-            var user = await _userManager.FindByNameAsync(userName);
-            if (user is not null)
+            string token = Request.Headers["Authorization"];
+            if (token is not null)
             {
                 try
                 {
-                    int totalWatchLater = await _filmManager.TotalAllWatchLaterFilmAsync(user.Id);
-                    int totalFavourite = await _filmManager.TotalAllFavouriteFilmAsync(user.Id);
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+
+                    var user = await _userManager.FindByIdAsync(id);
                     var userRoles = await _userManager.GetRolesAsync(user);
 
-                    ProfileUserResponse response = new()
+                    var result = new ProfileUserResponse
                     {
                         DateReg = user.DateReg,
                         Email = user.Email,
                         City = user.City,
                         Roles = userRoles,
                         UserName = user.UserName,
-                        WatchLater = totalWatchLater,
-                        Favourite = totalFavourite,
                         PathPhoto = user.PathPhoto,
                         PhotoName = user.PhotoName
                     };
-
-                    return Ok(response);
+                    return Ok(result);
                 }
                 catch (Exception ex)
                 {
@@ -224,69 +227,43 @@ namespace FilmOnline.WebApi.Controllers
             }
             else
             {
-                return NotFound(new { message = "Пользователь не найден" });
-            };
+                return NotFound(new { message = "Не авторизованы" });
+            }
         }
 
+        [OwnAuthorizeAdmin]
         [HttpGet("allUsers")]
         public async Task<IActionResult> GetAllUsersAsync()
         {
             var users = await _userManager.Users.ToListAsync();
             var userResponses = new List<ProfileUserResponse>();
 
-            foreach (var item in users)
+            foreach (var user in users)
             {
+                var userRoles = await _userManager.GetRolesAsync(user);
                 userResponses.Add(new ProfileUserResponse
                 {
-                    Id = item.Id,
-                    Email = item.Email,
-                    UserName = item.UserName,
-                    PathPhoto = item.PathPhoto,
-                    PhotoName= item.PhotoName,
-                    City = item.City, 
-                    DateReg = item.DateReg,
+                    Id = user.Id,
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    PathPhoto = user.PathPhoto,
+                    PhotoName= user.PhotoName,
+                    City = user.City, 
+                    DateReg = user.DateReg,
+                    Roles = userRoles,
                 });
             }
 
             return Ok(userResponses);
         }
 
-        [HttpDelete("DeleteUser{id}")]
+        [OwnAuthorizeAdmin]
+        [HttpDelete("")]
         public async Task<IActionResult> DeleteUsersAsync(string id)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
             await _userManager.DeleteAsync(user);
             return Ok();
-        }
-
-        [HttpGet("CheckUserEmail")]
-        public async Task<Boolean> CheckEmailUsersAsync([FromBody] string email)
-        {
-            var users = await _userManager.Users.ToListAsync();
-
-            foreach (var item in users)
-            {
-                if (item.Email == email)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        [HttpGet("CheckUserName")]
-        public async Task<Boolean> CheckNameUsersAsync([FromBody] string name)
-        {
-            var users = await _userManager.Users.ToListAsync();
-
-            foreach (var item in users)
-            {
-                if (item.UserName == name)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

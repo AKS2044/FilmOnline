@@ -58,16 +58,6 @@ namespace FilmOnline.Data.Models
         public float RatingSite { get; set; }
 
         /// <summary>
-        /// Rating kinopoisk.
-        /// </summary>
-        public string RatingKinopoisk { get; set; }
-
-        /// <summary>
-        /// Rating imdb.
-        /// </summary>
-        public string RatingImdb { get; set; }
-
-        /// <summary>
         /// Link for file film.
         /// </summary>
         public string LinkFilmPlayer { get; set; }

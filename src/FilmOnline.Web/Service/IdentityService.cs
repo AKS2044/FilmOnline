@@ -125,7 +125,6 @@ namespace FilmOnline.Web.Service
         {
             UserFilmRequest result = new()
             {
-                UserName = userName,
                 FilmId = filmId
             };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/Film/AddFavouriteFilm")
@@ -168,7 +167,6 @@ namespace FilmOnline.Web.Service
         {
             UserFilmRequest result = new()
             {
-                UserName = userName,
                 FilmId = idFilm
             };
             var request = new HttpRequestMessage(HttpMethod.Delete, "/api/Film/DeleteFavouriteFilm")
@@ -191,7 +189,6 @@ namespace FilmOnline.Web.Service
         {
             UserFilmRequest result = new()
             {
-                UserName = userName,
                 FilmId = filmId
             };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/Film/AddWatchLaterFilm")
@@ -235,7 +232,6 @@ namespace FilmOnline.Web.Service
         {
             UserFilmRequest result = new()
             {
-                UserName = userName,
                 FilmId = idFilm
             };
             var request = new HttpRequestMessage(HttpMethod.Delete, "/api/Film/DeleteWatchLaterFilm")

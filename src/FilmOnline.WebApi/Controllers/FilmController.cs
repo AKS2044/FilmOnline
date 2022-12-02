@@ -6,13 +6,13 @@ using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
 using FilmOnline.WebApi.Attributes;
 using FilmOnline.WebApi.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -38,9 +38,9 @@ namespace FilmOnline.WebApi.Controllers
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        //[OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPost("addfilm")]
-        public async Task<IActionResult> CreateAsync(/*[FromBody]*/ FilmCreateRequest request)
+        public async Task<IActionResult> CreateAsync(FilmCreateRequest request)
         {
             var filmActorDtos = new List<FilmActorDto>();
             var filmGenreDtos = new List<FilmGenreDto>();
@@ -61,32 +61,6 @@ namespace FilmOnline.WebApi.Controllers
                 LinkFilmtrailer = request.LinkFilmtrailer,
                 LinkFilmPlayer = request.LinkFilmPlayer
             };
-
-            if (request.IdRating != 0)
-            {
-                var idRating = request.IdRating;
-                Uri baseURI = new("https://rating.kinopoisk.ru/");
-                Uri XmlPuth = new(baseURI, $"{idRating}.xml");
-                string xmlStr;
-                WebClient webClient = new();
-                using (WebClient wc = webClient)
-                {
-                    xmlStr = wc.DownloadString(XmlPuth);
-                }
-                var xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(xmlStr);
-
-                XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
-                XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
-                XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
-                string kinopoiskData = kinopoisk.InnerText;
-                if (imdb is not null)
-                {
-                    string ImdbData = imdb.InnerText;
-                    filmDto.RatingImdb = ImdbData;
-                }
-                filmDto.RatingKinopoisk = kinopoiskData;
-            }
 
             foreach (var item in request.ActorIds)
             {
@@ -141,7 +115,7 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(film);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPost("UpgradeFilm")]
         public async Task<IActionResult> UpgradeFilmAsync([FromBody] FilmUpgradeModel request)
         {
@@ -311,7 +285,6 @@ namespace FilmOnline.WebApi.Controllers
             }
             catch (Exception err)
             {
-
                 return BadRequest(new { message = "Не удалось загрузить файл: " + err });
             }
         }
@@ -339,79 +312,167 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(result);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _filmManager.DeleteAsync(id);
         }
 
+        [OwnAuthorize]
         [HttpPost("AddFavouriteFilm")]
         public async Task<IActionResult> AddFavouriteFilmAsync(UserFilmRequest request)
         {
-            var idUser = await _userManager.FindByNameAsync(request.UserName);
-            await _filmManager.AddFavouriteFilmAsync(request.FilmId, idUser.Id);
+            await _filmManager.AddFavouriteFilmAsync(request.FilmId, request.Id);
             return Ok();
         }
 
+        [OwnAuthorize]
         [HttpDelete("DeleteFavouriteFilm")]
-        public async Task<IActionResult> DeleteFavouriteFilmAsync(UserFilmRequest request)
+        public async Task<IActionResult> DeleteFavouriteFilmAsync(int filmId)
         {
-            var idUser = await _userManager.FindByNameAsync(request.UserName);
-            await _filmManager.DeleteFavouriteFilmAsync(request.FilmId, idUser.Id);
+            string token = Request.Headers["Authorization"];
+            if (token is not null)
+            {
+                try
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+
+                    await _filmManager.DeleteFavouriteFilmAsync(filmId, id);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Не авторизованы" });
+            }
             return Ok();
         }
 
+        [OwnAuthorize]
         [HttpGet("GetAllFavouriteFilm")]
-        public async Task<IActionResult> GetAllFavouriteFilmAsync([FromBody] string userName)
+        public async Task<IActionResult> GetAllFavouriteFilmAsync()
         {
-            var idUser = await _userManager.FindByNameAsync(userName);
-            var model = await _filmManager.GetAllFavouriteFilmAsync(idUser.Id);
             var result = new List<FilmShortModelResponse>();
-            foreach (var item in model)
+            string token = Request.Headers["Authorization"];
+
+            if (token is not null)
             {
-                result.Add(new FilmShortModelResponse
+                try
                 {
-                    Id = item.Id,
-                    NameFilms = item.NameFilms,
-                    ReleaseDate = item.ReleaseDate,
-                    PathPoster = item.PathPoster
-                });
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+
+                    var user = await _userManager.FindByIdAsync(id);
+                    var model = await _filmManager.GetAllFavouriteFilmAsync(user.Id);
+
+                    foreach (var item in model)
+                    {
+                        result.Add(new FilmShortModelResponse
+                        {
+                            Id = item.Id,
+                            NameFilms = item.NameFilms,
+                            ReleaseDate = item.ReleaseDate,
+                            PathPoster = item.PathPoster
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Не авторизованы" });
             }
             return Ok(result);
         }
 
+        [OwnAuthorize]
         [HttpPost("AddWatchLaterFilm")]
         public async Task<IActionResult> AddWatchLaterFilmAsync(UserFilmRequest request)
         {
-            var idUser = await _userManager.FindByNameAsync(request.UserName);
-            await _filmManager.AddWatchLaterFilmAsync(request.FilmId, idUser.Id);
+            await _filmManager.AddWatchLaterFilmAsync(request.FilmId, request.Id);
             return Ok();
         }
 
+        [OwnAuthorize]
         [HttpDelete("DeleteWatchLaterFilm")]
-        public async Task<IActionResult> DeleteWatchLaterFilmAsync(UserFilmRequest request)
+        public async Task<IActionResult> DeleteWatchLaterFilmAsync(int filmId)
         {
-            var idUser = await _userManager.FindByNameAsync(request.UserName);
-            await _filmManager.DeleteWatchLaterFilmAsync(request.FilmId, idUser.Id);
+            string token = Request.Headers["Authorization"];
+            if (token is not null)
+            {
+                try
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+
+                    await _filmManager.DeleteWatchLaterFilmAsync(filmId, id);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Не авторизованы" });
+            }
             return Ok();
         }
 
+        [OwnAuthorize]
         [HttpGet("GetAllWatchLaterFilm")]
-        public async Task<IActionResult> GetAlWatchLaterFilmAsync([FromBody] string userName)
+        public async Task<IActionResult> GetAlWatchLaterFilmAsync()
         {
-            var idUser = await _userManager.FindByNameAsync(userName);
-            var model = await _filmManager.GetAllWatchLaterFilmAsync(idUser.Id);
             var result = new List<FilmShortModelResponse>();
-            foreach (var item in model)
+            string token = Request.Headers["Authorization"];
+
+            if (token is not null)
             {
-                result.Add(new FilmShortModelResponse
+                try
                 {
-                    Id = item.Id,
-                    NameFilms = item.NameFilms,
-                    ReleaseDate = item.ReleaseDate,
-                    PathPoster = item.PathPoster
-                });
+                    var handler = new JwtSecurityTokenHandler();
+                    token = token.Replace("Bearer ", "");
+                    var jsonToken = handler.ReadToken(token);
+                    var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+                    var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
+
+                    var user = await _userManager.FindByIdAsync(id);
+                    var model = await _filmManager.GetAllWatchLaterFilmAsync(user.Id);
+
+                    foreach (var item in model)
+                    {
+                        result.Add(new FilmShortModelResponse
+                        {
+                            Id = item.Id,
+                            NameFilms = item.NameFilms,
+                            ReleaseDate = item.ReleaseDate,
+                            PathPoster = item.PathPoster
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
+            }else {
+                return BadRequest(new { message = "Не авторизованы"});
             }
             return Ok(result);
         }

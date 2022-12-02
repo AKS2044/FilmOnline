@@ -1,4 +1,6 @@
-﻿using FilmOnline.Logic.Interfaces;
+﻿using FilmOnline.Data.Models;
+using FilmOnline.Logic.Interfaces;
+using FilmOnline.Logic.Managers;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.WebApi.Attributes;
@@ -19,10 +21,19 @@ namespace FilmOnline.WebApi.Controllers
             _stageManagerManager = stageManagerManager ?? throw new ArgumentNullException(nameof(stageManagerManager));
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] StageManagerCreateRequest request)
         {
+            var stageManagers = await _stageManagerManager.GetAllAsync();
+
+            foreach (var item in stageManagers)
+            {
+                if (item.StageManagers == request.StageManagers)
+                {
+                    return BadRequest(new { message = "Данный режиссер уже существует " });
+                }
+            }
             StageManagerDto stageManagerDto = new()
             {
                 StageManagers = request.StageManagers
@@ -39,19 +50,19 @@ namespace FilmOnline.WebApi.Controllers
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllActor()
         {
-            var countries = await _stageManagerManager.GetAllAsync();
+            var stageManagers = await _stageManagerManager.GetAllAsync();
 
-            return Ok(countries);
+            return Ok(stageManagers);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _stageManagerManager.DeleteAsync(id);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPut("")]
         public async Task UpdateStageManagerAsync(StageManagerDto stageManagerDto, int id)
         {

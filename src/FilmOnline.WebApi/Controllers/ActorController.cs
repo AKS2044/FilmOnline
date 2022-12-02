@@ -1,4 +1,5 @@
 ﻿using FilmOnline.Logic.Interfaces;
+using FilmOnline.Logic.Managers;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.WebApi.Attributes;
@@ -19,10 +20,19 @@ namespace FilmOnline.WebApi.Controllers
             _actorManager = actorManager ?? throw new ArgumentNullException(nameof(actorManager));
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] ActorCreateRequest request)
         {
+            var actors = await _actorManager.GetAllAsync();
+
+            foreach (var item in actors)
+            {
+                if (item.FirstName == request.FirstName && item.LastName == request.LastName)
+                {
+                    return BadRequest(new { message = "Данный актер уже существует " });
+                }
+            }
             ActorDto actorDto = new()
             {
                 FirstName = request.FirstName,
@@ -46,14 +56,14 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(actors);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _actorManager.DeleteAsync(id);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPut("")]
         public async Task UpdateActorAsync(ActorDto actorDto, int id)
         {

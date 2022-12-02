@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace FilmOnline.Logic.Managers
 {
@@ -77,20 +79,9 @@ namespace FilmOnline.Logic.Managers
                 ImageName = filmDto.ImageName,
                 IdRating = filmDto.IdRating,
                 RatingSite = 0,
-                RatingKinopoisk = filmDto.RatingKinopoisk,
-                RatingImdb = filmDto.RatingImdb,
                 LinkFilmtrailer = filmDto.LinkFilmtrailer,
                 LinkFilmPlayer = filmDto.LinkFilmPlayer
             };
-            if (filmDto.RatingImdb is null)
-            {
-                film.RatingImdb = "0";
-            }
-
-            if (filmDto.RatingKinopoisk is null)
-            {
-                film.RatingKinopoisk = "0";
-            }
 
             await _filmRepository.CreateAsync(film);
             await _filmRepository.SaveChangesAsync();
@@ -173,16 +164,6 @@ namespace FilmOnline.Logic.Managers
             if (filmDto.RatingSite != film.RatingSite && filmDto.RatingSite != 0)
             {
                 film.RatingSite = filmDto.RatingSite;
-            }
-
-            if (filmDto.RatingKinopoisk != film.RatingKinopoisk && filmDto.RatingKinopoisk is not null)
-            {
-                film.RatingKinopoisk = filmDto.RatingKinopoisk;
-            }
-
-            if (filmDto.RatingImdb != film.RatingImdb && filmDto.RatingImdb is not null)
-            {
-                film.RatingImdb = filmDto.RatingImdb;
             }
 
             if (filmDto.LinkFilmPlayer != film.LinkFilmPlayer && filmDto.LinkFilmPlayer is not null)
@@ -323,7 +304,7 @@ namespace FilmOnline.Logic.Managers
                 });
             }
 
-            int pageSize = 2;
+            int pageSize = 20;
             var items = FilmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             return items;
@@ -394,6 +375,36 @@ namespace FilmOnline.Logic.Managers
             }).ToListAsync();
 
             var rating = await GetTotalScoreFilm(film.Id);
+            string kinopoiskRating = "0";
+            string kinopoiskImdb = "0";
+
+            if (film.IdRating != 0)
+            {
+                Uri baseURI = new("https://rating.kinopoisk.ru/");
+                Uri XmlPuth = new(baseURI, $"{film.IdRating}.xml");
+                string xmlStr;
+                WebClient webClient = new();
+                using (WebClient wc = webClient)
+                {
+                    xmlStr = wc.DownloadString(XmlPuth);
+                }
+                var xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(xmlStr);
+
+                XmlNodeList saveItems = xmlDoc.SelectNodes("rating");
+                XmlNode kinopoisk = saveItems.Item(0).SelectSingleNode("kp_rating");
+                XmlNode imdb = saveItems.Item(0).SelectSingleNode("imdb_rating");
+                if (imdb is not null)
+                {
+                    string ImdbData = imdb.InnerText;
+                    kinopoiskImdb = ImdbData;
+                }
+                if (kinopoisk is not null)
+                {
+                    string kinopoiskData = kinopoisk.InnerText;
+                    kinopoiskRating = kinopoiskData;
+                }
+            }
 
             FilmModelResponse model = new()
             {
@@ -402,10 +413,10 @@ namespace FilmOnline.Logic.Managers
                 ImageName = film.ImageName,
                 PathPoster = film.PathPoster,
                 ReleaseDate = film.ReleaseDate,
-                RatingKinopoisk = film.RatingKinopoisk,
                 LinkFilmtrailer = film.LinkFilmtrailer,
                 LinkFilmPlayer = film.LinkFilmPlayer,
-                RatingImdb = film.RatingImdb,
+                RatingImdb = kinopoiskImdb,
+                RatingKinopoisk = kinopoiskRating,
                 RatingSite = rating,
                 AgeLimit = film.AgeLimit,
                 Time = film.Time,
@@ -609,18 +620,6 @@ namespace FilmOnline.Logic.Managers
                 ImageName = r.ImageName
             }).ToListAsync();
             return films;
-        }
-
-        public async Task<int> TotalAllWatchLaterFilmAsync(string idUser)
-        {
-            var wathLaterFilmIds = await _userWatchLaterFilmRepository.GetAll().Where(r => r.UserId == idUser).Select(r => r.FilmId).ToListAsync();
-            return wathLaterFilmIds.Count();
-        }
-
-        public async Task<int> TotalAllFavouriteFilmAsync(string idUser)
-        {
-            var favouriteFilmIds = await _userFavouriteFilmRepository.GetAll().Where(r => r.UserId == idUser).Select(r => r.FilmId).ToListAsync();
-            return favouriteFilmIds.Count();
         }
     }
 }

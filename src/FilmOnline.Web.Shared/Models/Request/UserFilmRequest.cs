@@ -5,7 +5,7 @@
         /// <summary>
         /// User id.
         /// </summary>
-        public string UserName { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Film id.

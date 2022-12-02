@@ -19,10 +19,19 @@ namespace FilmOnline.WebApi.Controllers
             _countryManager = countryManager ?? throw new ArgumentNullException(nameof(countryManager));
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] CountryCreateRequest request)
         {
+            var countries = await _countryManager.GetAllAsync();
+
+            foreach (var item in countries)
+            {
+                if (item.Country == request.Country)
+                {
+                    return BadRequest(new { message = "Данная страна уже существует " });
+                }
+            }
             StateDto stateDto = new()
             {
                 Country = request.Country
@@ -44,14 +53,14 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(countries);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _countryManager.DeleteAsync(id);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPut("")]
         public async Task UpdateCountryAsync(StateDto stateDto, int id)
         {

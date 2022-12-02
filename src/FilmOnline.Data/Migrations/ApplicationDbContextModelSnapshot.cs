@@ -81,16 +81,6 @@ namespace FilmOnline.Data.Migrations
                     b.Property<string>("PathPoster")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RatingImdb")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
-                    b.Property<string>("RatingKinopoisk")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
                     b.Property<float>("RatingSite")
                         .HasMaxLength(6)
                         .HasColumnType("real");

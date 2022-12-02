@@ -1,4 +1,5 @@
 ﻿using FilmOnline.Logic.Interfaces;
+using FilmOnline.Logic.Managers;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.WebApi.Attributes;
@@ -19,10 +20,19 @@ namespace FilmOnline.WebApi.Controllers
             _genreManager = genreManager ?? throw new ArgumentNullException(nameof(genreManager));
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPost("add")]
         public async Task<IActionResult> CreateAsync([FromBody] GenreCreateRequest request)
         {
+            var genres = await _genreManager.GetAllAsync();
+
+            foreach (var item in genres)
+            {
+                if (item.Genres == request.Genres)
+                {
+                    return BadRequest(new { message = "Данный жанр уже существует " });
+                }
+            }
             GenreDto genreDto = new()
             {
                 Genres = request.Genres
@@ -44,14 +54,14 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(genres);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpDelete("")]
         public async Task DeleteAsync(int id)
         {
             await _genreManager.DeleteAsync(id);
         }
 
-        [OwnAuthorize]
+        [OwnAuthorizeAdmin]
         [HttpPut("")]
         public async Task UpdateGenreAsync(GenreDto genreDto, int id)
         {

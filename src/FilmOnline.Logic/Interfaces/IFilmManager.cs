@@ -148,17 +148,5 @@ namespace FilmOnline.Logic.Interfaces
         /// </summary>
         /// <param name="idUser">User identifier.</param>
         Task<IEnumerable<FilmDto>> GetAllWatchLaterFilmAsync(string idUser);
-
-        /// <summary>
-        /// Get total numbers films in watch later.
-        /// </summary>
-        /// <returns>Int result.</returns>
-        Task<int> TotalAllWatchLaterFilmAsync(string idUser);
-
-        /// <summary>
-        /// Get total numbers films in favourite.
-        /// </summary>
-        /// <returns>Int result.</returns>
-        Task<int> TotalAllFavouriteFilmAsync(string idUser);
     }
 }

@@ -36,16 +36,6 @@ namespace FilmOnline.Web.Shared.Models.Responses
         public IList<string> Roles { get; set; }
 
         /// <summary>
-        /// Favourite.
-        /// </summary>
-        public int Favourite { get; set; }
-
-        /// <summary>
-        /// Later see.
-        /// </summary>
-        public int WatchLater { get; set; }
-
-        /// <summary>
         /// Path to file.
         /// </summary>
         public string PathPhoto { get; set; }
