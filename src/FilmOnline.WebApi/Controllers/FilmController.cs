@@ -298,20 +298,22 @@ namespace FilmOnline.WebApi.Controllers
             return Ok(film);
         }
 
+        [OwnAuthorize]
         [HttpPost("rating")]
-        public async Task<IActionResult> AddRatingAsync(int filmId, int score)
+        public async Task<IActionResult> AddRatingAsync(RatingCreateRequest request)
         {
-            await _filmManager.AddScoreFilmAsync(filmId, score);
+            var result = await _filmManager.CheckUserForRating(request);
+            if (!result)
+            {
+                await _filmManager.SetRatingFilmAsync(request);
+            }
+            else
+            {
+                return BadRequest(new { message = "Вы уже оставили свою оценку" });
+            }
             return Ok();
         }
-
-        [HttpGet("Totalrating")]
-        public async Task<IActionResult> TotalRatingAsync(int filmId)
-        {
-            var result = await _filmManager.GetTotalScoreFilm(filmId);
-            return Ok(result);
-        }
-
+        
         [OwnAuthorizeAdmin]
         [HttpDelete("")]
         public async Task DeleteAsync(int id)

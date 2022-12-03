@@ -293,14 +293,13 @@ namespace FilmOnline.Logic.Managers
 
             foreach (var item in films)
             {
-                var rating = await GetTotalScoreFilm(item.Id);
                 FilmDtos.Add(new FilmDto
                 {
                     Id = item.Id,
                     NameFilms = item.NameFilms,
                     ReleaseDate = item.ReleaseDate,
                     PathPoster = item.PathPoster,
-                    RatingSite = rating
+                    RatingSite = item.RatingSite,
                 });
             }
 
@@ -357,6 +356,10 @@ namespace FilmOnline.Logic.Managers
 
         public async Task<FilmModelResponse> GetByIdAsync(int id)
         {
+            float totalRating = 0f;
+            string kinopoiskRating = "0";
+            string kinopoiskImdb = "0";
+
             Film film = await _filmRepository.GetEntityAsync(f => f.Id == id);
             var filmCountryIds = await _filmCountryRepository.GetAll().Where(f => f.FilmId == film.Id).Select(f => f.CountryId).ToListAsync();
             var countries = await _countryRepository.GetAll().Where(c => filmCountryIds.Contains(c.Id)).Select(c => c.Country).ToListAsync();
@@ -367,6 +370,9 @@ namespace FilmOnline.Logic.Managers
             var filmStageManagerIds = await _filmStageManagerRepository.GetAll().Where(f => f.FilmId == film.Id).Select(f => f.StageManagerId).ToListAsync();
             var stageManagers = await _stageManagerRepository.GetAll().Where(m => filmStageManagerIds.Contains(m.Id)).Select(m => m.StageManagers).ToListAsync();
 
+            var filmRatingIds = await _filmRatingRepository.GetAll().Where(r => r.FilmId == id).Select(r => r.RatingId).ToListAsync();
+            var ratings = await _ratingRepository.GetAll().Where(c => filmRatingIds.Contains(c.Id)).Select(c => c.Ratings).ToListAsync();
+
             var filmActorIds = await _filmActorRepository.GetAll().Where(f => f.FilmId == film.Id).Select(f => f.ActorId).ToListAsync();
             var actors = await _actorRepository.GetAll().Where(a => filmActorIds.Contains(a.Id)).Select(a => new Actor
             {
@@ -374,9 +380,7 @@ namespace FilmOnline.Logic.Managers
                 LastName = a.LastName,
             }).ToListAsync();
 
-            var rating = await GetTotalScoreFilm(film.Id);
-            string kinopoiskRating = "0";
-            string kinopoiskImdb = "0";
+            totalRating = (float)ratings.Sum() / (float)ratings.Count;
 
             if (film.IdRating != 0)
             {
@@ -417,7 +421,7 @@ namespace FilmOnline.Logic.Managers
                 LinkFilmPlayer = film.LinkFilmPlayer,
                 RatingImdb = kinopoiskImdb,
                 RatingKinopoisk = kinopoiskRating,
-                RatingSite = rating,
+                RatingSite = (float)Math.Round(totalRating, 2),
                 AgeLimit = film.AgeLimit,
                 Time = film.Time,
                 Description = film.Description,
@@ -517,11 +521,13 @@ namespace FilmOnline.Logic.Managers
             return randomFilm.Id;
         }
 
-        public async Task AddScoreFilmAsync(int idFilm, int score)
+        public async Task SetRatingFilmAsync(RatingCreateRequest request)
         {
+            Film film = await _filmRepository.GetEntityAsync(f => f.Id == request.FilmId);
             Rating rating = new()
             {
-                Ratings = score
+                Ratings = request.Rating,
+                UserName = request.UserName
             };
 
             await _ratingRepository.CreateAsync(rating);
@@ -529,25 +535,30 @@ namespace FilmOnline.Logic.Managers
 
             FilmRating filmRating = new()
             {
-                FilmId = idFilm,
+                FilmId = request.FilmId,
                 RatingId = rating.Id
             };
             await _filmRatingRepository.CreateAsync(filmRating);
             await _filmRatingRepository.SaveChangesAsync();
+
+            var filmRatingIds = await _filmRatingRepository.GetAll().Where(r => r.FilmId == request.FilmId).Select(r => r.RatingId).ToListAsync();
+            var ratings = await _ratingRepository.GetAll().Where(c => filmRatingIds.Contains(c.Id)).Select(c => c.Ratings).ToListAsync();
+            float totalRating = (float)ratings.Sum() / (float)ratings.Count;
+            film.RatingSite = totalRating;
+            await _filmRepository.SaveChangesAsync();
         }
 
-        public async Task<float> GetTotalScoreFilm(int idFilm)
+        public async Task<bool> CheckUserForRating(RatingCreateRequest request)
         {
-            var filmRatingIds = await _filmRatingRepository.GetAll().Where(r => r.FilmId == idFilm).Select(r => r.RatingId).ToListAsync();
-            var ratings = await _ratingRepository.GetAll().Where(c => filmRatingIds.Contains(c.Id)).Select(c => c.Ratings).ToListAsync();
-            float totalNull = 0f;
-            if (ratings.Count == 0)
+            var filmRatingIds = await _filmRatingRepository.GetAll().Where(r => r.FilmId == request.FilmId).Select(r => r.RatingId).ToListAsync();
+            var ratings = await _ratingRepository.GetAll().Where(c => filmRatingIds.Contains(c.Id)).ToListAsync();
+            var result = ratings.Find(r => r.UserName == request.UserName);
+            if (result is null)
             {
-                return totalNull;
+                return false;
             }
-            float total = (float)ratings.Sum() / (float)ratings.Count;
 
-            return total;
+            return true;
         }
 
         public async Task AddFavouriteFilmAsync(int idFilm, string idUser)

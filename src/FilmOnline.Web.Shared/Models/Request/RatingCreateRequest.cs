@@ -15,5 +15,11 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// </summary>
         [Required]
         public int Rating { get; set; }
+
+        /// <summary>
+        /// UserName.
+        /// </summary>
+        [Required]
+        public string UserName { get; set; }
     }
 }

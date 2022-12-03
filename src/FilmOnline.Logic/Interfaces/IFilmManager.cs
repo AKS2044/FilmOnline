@@ -1,5 +1,6 @@
 ﻿using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models;
+using FilmOnline.Web.Shared.Models.Request;
 using FilmOnline.Web.Shared.Models.Responses;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -93,9 +94,9 @@ namespace FilmOnline.Logic.Interfaces
         Task<IEnumerable<FilmDto>> GetSliderAsync();
 
         /// <summary>
-        /// Get all short information Film.
+        /// Set rating Film.
         /// </summary>
-        Task AddScoreFilmAsync(int idFilm, int score);
+        Task SetRatingFilmAsync(RatingCreateRequest request);
 
         /// <summary>
         /// Get random Film.
@@ -104,10 +105,10 @@ namespace FilmOnline.Logic.Interfaces
         Task<int> GetRandomFilmAsync();
 
         /// <summary>
-        /// Get total score film.
+        /// Check user name for rating film
         /// </summary>
-        /// <returns>Float result.</returns>
-        Task<float> GetTotalScoreFilm(int idFilm);
+        /// <returns>boolean result.</returns>
+        Task<bool> CheckUserForRating(RatingCreateRequest request);
 
         /// <summary>
         /// Add favourite film for user.

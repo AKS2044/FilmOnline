@@ -187,7 +187,7 @@ namespace FilmOnline.WebApi.Controllers
             }
             else
             {
-                return NotFound(new { message = "Пользователь не найден" });
+                return Unauthorized(new { message = "Вы не авторизованы" });
             }
         }
         [OwnAuthorize]

@@ -240,6 +240,9 @@ namespace FilmOnline.Data.Migrations
                     b.Property<int>("Ratings")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Ratings", "Film");
