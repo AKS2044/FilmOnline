@@ -93,6 +93,11 @@ namespace FilmOnline.Data.Models
         public ICollection<FilmGenre> FilmGenres { get; set; }
 
         /// <summary>
+        /// Navigation property for CommentFilmUser.
+        /// </summary>
+        public ICollection<CommentFilmUser> CommentFilmUsers { get; set; }
+
+        /// <summary>
         /// Navigation property for UserFavouriteFilms.
         /// </summary>
         public ICollection<UserFavouriteFilm> UserFavouriteFilms { get; set; }

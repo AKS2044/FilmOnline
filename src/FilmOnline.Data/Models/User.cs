@@ -35,5 +35,10 @@ namespace FilmOnline.Data.Models
         /// Navigation property for UserWatchLaterFilms.
         /// </summary>
         public ICollection<UserWatchLaterFilm> UserWatchLaterFilms { get; set; }
+
+        /// <summary>
+        /// Navigation property for CommentFilmUser.
+        /// </summary>
+        public ICollection<CommentFilmUser> CommentFilmUsers { get; set; }
     }
 }

@@ -77,6 +77,16 @@ namespace FilmOnline.Data.Contexts
         public DbSet<UserWatchLaterFilm> UserWatchLaterFilms { get; set; }
 
         /// <summary>
+        /// DbSet for Comment.
+        /// </summary>
+        public DbSet<Comment> Comments { get; set; }
+
+        /// <summary>
+        /// DbSet for CommentFilmUser.
+        /// </summary>
+        public DbSet<CommentFilmUser> CommentFilmUsers { get; set; }
+
+        /// <summary>
         /// Contructor with params.
         /// </summary>
         /// <param name="options">Database context options.</param>
@@ -103,6 +113,8 @@ namespace FilmOnline.Data.Contexts
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new UserFavouriteFilmsConfiguration());
             builder.ApplyConfiguration(new UserWatchLaterFilmsConfiguration());
+            builder.ApplyConfiguration(new CommentFilmUserConfiguration());
+            builder.ApplyConfiguration(new CommentConfiguration());
 
             base.OnModelCreating(builder);
         }

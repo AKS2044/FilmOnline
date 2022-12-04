@@ -284,8 +284,9 @@ namespace FilmOnline.Logic.Managers
             await _filmRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<FilmDto>> GetAllAsync(int page)
+        public async Task<IEnumerable<FilmDto>> GetAllAsync(int page, int genreId)
         {
+            int pageSize = 20;
             var FilmDtos = new List<FilmDto>();
 
             var films = await _filmRepository
@@ -303,7 +304,23 @@ namespace FilmOnline.Logic.Managers
                 });
             }
 
-            int pageSize = 20;
+            if (genreId != 0)
+            {
+                var filmGenreIds = await _filmGenreRepository.GetAll().Where(f => f.GenreId == genreId).Select(f => f.FilmId).ToListAsync();
+                //var itemss = await _filmRepository.GetAll().Where(g => filmGenreIds.Contains(g.Id)).ToListAsync();
+                var filmsSortGenreParams = await _filmRepository.GetAll().Where(r => filmGenreIds.Contains(r.Id)).Select(r => new FilmDto
+                {
+                    Id = r.Id,
+                    NameFilms = r.NameFilms,
+                    PathPoster = r.PathPoster,
+                    ReleaseDate = r.ReleaseDate,
+                    ImageName = r.ImageName
+                }).ToListAsync();
+                var filmsGetGenreParams = filmsSortGenreParams.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                return filmsGetGenreParams;
+            }
+
             var items = FilmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             return items;

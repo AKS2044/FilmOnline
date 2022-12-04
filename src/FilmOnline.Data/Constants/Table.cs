@@ -74,5 +74,15 @@
         /// StageManager.
         /// </summary>
         public const string StageManagers = nameof(StageManagers);
+
+        /// <summary>
+        /// CommentFilmUser.
+        /// </summary>
+        public const string CommentFilmUsers = nameof(CommentFilmUsers);
+
+        /// <summary>
+        /// StageManager.
+        /// </summary>
+        public const string Comments = nameof(Comments);
     }
 }

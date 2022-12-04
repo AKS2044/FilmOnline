@@ -38,6 +38,7 @@ namespace FilmOnline.WebApi
             services.AddScoped<IActorManager, ActorManager>();
             services.AddScoped<IGenreManager, GenreManager>();
             services.AddScoped<ICountryManager, CountryManager>();
+            services.AddScoped<ICommentManager, CommentManager>();
             services.AddScoped<IStageManagerManager, StageManagerManager>();
             services.AddScoped<IJwtService, JwtService>();
 

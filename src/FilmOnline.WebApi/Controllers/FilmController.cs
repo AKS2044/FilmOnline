@@ -253,10 +253,10 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [HttpGet("Films")]
-        public async Task<IActionResult> GetAll([FromQuery] QueryParameters parametrs)
+        public async Task<IActionResult> GetAll([FromQuery] QueryParameters parameters)
         {
 
-            var film = await _filmManager.GetAllAsync(parametrs.Page);
+            var film = await _filmManager.GetAllAsync(parameters.Page, parameters.GenreId);
 
             return Ok(film);
         }

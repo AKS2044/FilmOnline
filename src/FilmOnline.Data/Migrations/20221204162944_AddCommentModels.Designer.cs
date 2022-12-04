@@ -4,6 +4,7 @@ using FilmOnline.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FilmOnline.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221204162944_AddCommentModels")]
+    partial class AddCommentModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,11 +60,9 @@ namespace FilmOnline.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Comments")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DateSet")
+                    b.Property<string>("DateReg")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Dislike")
@@ -73,7 +73,7 @@ namespace FilmOnline.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comments", "Film");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("FilmOnline.Data.Models.CommentFilmUser", b =>
@@ -101,7 +101,7 @@ namespace FilmOnline.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentFilmUsers", "Film");
+                    b.ToTable("CommentFilmUsers");
                 });
 
             modelBuilder.Entity("FilmOnline.Data.Models.Film", b =>
@@ -598,19 +598,18 @@ namespace FilmOnline.Data.Migrations
                     b.HasOne("FilmOnline.Data.Models.Comment", "Comment")
                         .WithMany("CommentFilmUsers")
                         .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FilmOnline.Data.Models.Film", "Film")
                         .WithMany("CommentFilmUsers")
                         .HasForeignKey("FilmId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FilmOnline.Data.Models.User", "User")
                         .WithMany("CommentFilmUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Comment");
 
