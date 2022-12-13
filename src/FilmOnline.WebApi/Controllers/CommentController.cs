@@ -1,4 +1,5 @@
-﻿using FilmOnline.Logic.Interfaces;
+﻿using FilmOnline.Data.Models;
+using FilmOnline.Logic.Interfaces;
 using FilmOnline.Logic.Managers;
 using FilmOnline.Logic.Models;
 using FilmOnline.Web.Shared.Models.Request;
@@ -44,33 +45,28 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        //[HttpGet("getAll")]
-        //public async Task<IActionResult> GetAllActor()
-        //{
-        //    var actors = await _actorManager.GetAllAsync();
-
-        //    return Ok(actors);
-        //}
+        [HttpDelete("")]
+        public async Task DeleteAsync(int id)
+        {
+            await _commentManager.DeleteAsync(id);
+        }
 
         //[OwnAuthorizeAdmin]
-        //[HttpDelete("")]
-        //public async Task DeleteAsync(int id)
-        //{
-        //    await _actorManager.DeleteAsync(id);
-        //}
+        [HttpPut("")]
+        public async Task UpdateActorAsync(CommentDto commentDto)
+        {
+            if (commentDto.Comments is not null)
+            {
+                await _commentManager.UpdateAsync(commentDto);
+            }
+        }
 
-        //[OwnAuthorizeAdmin]
-        //[HttpPut("")]
-        //public async Task UpdateActorAsync(ActorDto actorDto, int id)
-        //{
-        //    ActorDto result = new()
-        //    {
-        //        Id = id,
-        //        FirstName = actorDto.FirstName,
-        //        LastName = actorDto.LastName,
-        //        SecondName = actorDto.SecondName
-        //    };
-        //    await _actorManager.UpdateAsync(result);
-        //}
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAllActor(int filmId)
+        {
+            var comments = await _commentManager.GetAllAsync(filmId);
+
+            return Ok(comments);
+        }
     }
 }

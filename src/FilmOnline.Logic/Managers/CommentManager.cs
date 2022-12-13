@@ -46,67 +46,63 @@ namespace FilmOnline.Logic.Managers
             await _commentFilmUserRepository.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(int id)
+        {
+
+            var commentFilmUser = await _commentFilmUserRepository
+               .GetAll()
+               .SingleOrDefaultAsync(r => r.CommentId == id);
+
+            if (commentFilmUser is null)
+            {
+                throw new NotFoundException($"'{nameof(id)}' record not found.", nameof(id));
+            }
+
+            _commentFilmUserRepository.Delete(commentFilmUser);
+            await _commentFilmUserRepository.SaveChangesAsync();
+
+            var comment = await _commentRepository
+               .GetAll()
+               .SingleOrDefaultAsync(r => r.Id == id);
+
+            if (comment is null)
+            {
+                throw new NotFoundException($"'{nameof(id)}' record not found.", nameof(id));
+            }
+
+            _commentRepository.Delete(comment);
+            await _commentRepository.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(CommentDto commentDto)
+        {
+            var comment = await _commentRepository.GetEntityAsync(c => c.Id == commentDto.Id);
+
+            if (commentDto.Comments != comment.Comments && commentDto.Comments is not null)
+            {
+                comment.Comments = commentDto.Comments;
+            }
+            await _commentRepository.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<CommentDto>> GetAllAsync(int filmId)
         {
             var commentDto = new List<CommentDto>();
 
-            //var actors = await _actorRepository
-            //    .GetAll()
-            //    .Select(a => new Actor
-            //    {
-            //        Id = a.Id, 
-            //        FirstName = a.FirstName,
-            //        LastName = a.LastName,
-            //        SecondName = a.SecondName
-            //    }).ToListAsync();
+            var commentFilmUserIds = await _commentFilmUserRepository.GetAll().Where(c => c.FilmId == filmId).Select(c => c.CommentId).ToListAsync();
+            var comments = await _commentRepository.GetAll().Where(c => commentFilmUserIds.Contains(c.Id)).ToListAsync();
 
-            //foreach (var item in actors)
-            //{
-            //    actorDtos.Add(new ActorDto
-            //    {
-            //        Id = item.Id,
-            //        FirstName = item.FirstName,
-            //        LastName = item.LastName,
-            //        SecondName = item.SecondName
-            //    });
-            //}
+            foreach (var item in comments)
+            {
+                commentDto.Add(new CommentDto
+                {
+                    Id = item.Id,
+                    Comments = item.Comments,
+                    DateSet = item.DateSet,
+                    Dislike = item.Dislike,
+                    Like = item.Like,
+                });
+            }
             return commentDto;
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            //var actor = await _actorRepository
-            //   .GetAll()
-            //   .SingleOrDefaultAsync(r => r.Id == id);
-
-            //if (actor is null)
-            //{
-            //    throw new NotFoundException($"'{nameof(id)}' record not found.", nameof(id));
-            //}
-
-            //_commentRepository.Delete(actor);
-            //await _commentRepository.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(CommentDto commentDto)
-        {
-            //var actor = await _commentRepository.GetEntityAsync(c => c.Id == actorDto.Id);
-
-            //if (actorDto.FirstName != actor.FirstName && actorDto.FirstName is not null)
-            //{
-            //    actor.FirstName = actorDto.FirstName;
-            //}
-
-            //if (actorDto.LastName != actor.LastName && actorDto.LastName is not null)
-            //{
-            //    actor.LastName = actorDto.LastName;
-            //}
-
-            //if (actorDto.SecondName != actor.SecondName && actorDto.SecondName is not null)
-            //{
-            //    actor.SecondName = actorDto.SecondName;
-            //}
-            //await _actorRepository.SaveChangesAsync();
         }
     }
 }
