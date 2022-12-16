@@ -23,6 +23,16 @@ namespace FilmOnline.Data.Models
         public string Comments { get; set; }
 
         /// <summary>
+        /// User name.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Path photo.
+        /// </summary>
+        public string PathPhoto { get; set; }
+
+        /// <summary>
         /// Like comment.
         /// </summary>
         public int Like { get; set; }

@@ -21,13 +21,15 @@ namespace FilmOnline.WebApi.Controllers
             _commentManager = commentManager ?? throw new ArgumentNullException(nameof(commentManager));
         }
 
-        [HttpPost("create")]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateAsync(CommentCreateRequest request)
         {
             DateTime dateSet = DateTime.Now;
             CommentDto commentDto = new()
             {
                 Comments = request.Comments,
+                UserName = request.UserName,
+                PathPhoto = request.PathPhoto,
                 DateSet = dateSet.ToLongDateString()
             };
 

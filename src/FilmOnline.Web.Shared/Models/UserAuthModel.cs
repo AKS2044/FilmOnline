@@ -31,5 +31,10 @@ namespace FilmOnline.Web.Shared.Models
         /// Roles.
         /// </summary>
         public IList<string> Roles { get; set; }
+
+        /// <summary>
+        /// Path to file.
+        /// </summary>
+        public string PathPhoto { get; set; }
     }
 }

@@ -7,9 +7,19 @@ namespace FilmOnline.Web.Shared.Models.Request
         /// <summary>
         /// Comment.
         /// </summary>
-        /// 
         [Required]
         public string Comments { get; set; }
+
+        [Required]
+        /// <summary>
+        /// User name.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Path photo.
+        /// </summary>
+        public string PathPhoto { get; set; }
 
         /// <summary>
         /// User identification.

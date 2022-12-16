@@ -28,10 +28,17 @@ namespace FilmOnline.Logic.Managers
             var comment = new Comment()
             {
                 Comments = commentDto.Comments,
+                UserName = commentDto.UserName,
                 DateSet = commentDto.DateSet,
                 Like = commentDto.Like,
                 Dislike = commentDto.Dislike,
             };
+
+            //Временно
+            if (commentDto.PathPhoto is not null)
+            {
+                comment.PathPhoto = commentDto.PathPhoto;
+            }
 
             await _commentRepository.CreateAsync(comment);
             await _commentRepository.SaveChangesAsync();
@@ -97,6 +104,8 @@ namespace FilmOnline.Logic.Managers
                 {
                     Id = item.Id,
                     Comments = item.Comments,
+                    UserName = item.UserName,
+                    PathPhoto = item.PathPhoto,
                     DateSet = item.DateSet,
                     Dislike = item.Dislike,
                     Like = item.Like,

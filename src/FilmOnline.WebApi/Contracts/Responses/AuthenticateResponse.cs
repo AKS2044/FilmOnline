@@ -18,6 +18,7 @@ namespace FilmOnline.WebApi.Contracts.Responses
         {
             Id = user.Id;
             UserName = user.UserName;
+            PathPhoto = user.PathPhoto;
             Email = user.Email;
             Token = token;
             Roles = roles;
