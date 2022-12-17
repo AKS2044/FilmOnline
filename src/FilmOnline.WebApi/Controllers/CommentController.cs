@@ -55,7 +55,7 @@ namespace FilmOnline.WebApi.Controllers
 
         //[OwnAuthorizeAdmin]
         [HttpPut("")]
-        public async Task UpdateActorAsync(CommentDto commentDto)
+        public async Task UpdateCommentAsync(CommentDto commentDto)
         {
             if (commentDto.Comments is not null)
             {
@@ -64,11 +64,27 @@ namespace FilmOnline.WebApi.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAllActor(int filmId)
+        public async Task<IActionResult> GetAllComment(int filmId)
         {
             var comments = await _commentManager.GetAllAsync(filmId);
 
             return Ok(comments);
+        }
+
+        [HttpPost("setLike")]
+        public async Task<IActionResult> SetLikeComment([FromBody] CommentDto commentDto)
+        {
+            await _commentManager.SetLikeAsync(commentDto.Id);
+
+            return Ok();
+        }
+
+        [HttpPost("setDislike")]
+        public async Task<IActionResult> SetDisLikeComment([FromBody] CommentDto commentDto)
+        {
+            await _commentManager.SetDisLikeAsync(commentDto.Id);
+
+            return Ok();
         }
     }
 }

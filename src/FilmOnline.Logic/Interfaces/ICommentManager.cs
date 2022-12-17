@@ -30,5 +30,17 @@ namespace FilmOnline.Logic.Interfaces
         /// </summary>
         /// <param name="filmId">film identifier.</param>
         Task<IEnumerable<CommentDto>> GetAllAsync(int filmId);
+
+        /// <summary>
+        /// Set like to comment.
+        /// </summary>
+        /// <param name="commentId">comment identifier.</param>
+        Task SetLikeAsync(int commentId);
+
+        /// <summary>
+        /// Set dislike to comment.
+        /// </summary>
+        /// <param name="commentId">comment identifier.</param>
+        Task SetDisLikeAsync(int commentId);
     }
 }

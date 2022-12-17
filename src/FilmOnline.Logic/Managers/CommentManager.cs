@@ -113,5 +113,27 @@ namespace FilmOnline.Logic.Managers
             }
             return commentDto;
         }
+
+        public async Task SetLikeAsync(int commentId)
+        {
+            var comment = await _commentRepository.GetEntityAsync(c => c.Id == commentId);
+            
+            if (comment is not null)
+            {
+                comment.Like += 1;
+                await _commentRepository.SaveChangesAsync();
+            }
+        }
+
+        public async Task SetDisLikeAsync(int commentId)
+        {
+            var comment = await _commentRepository.GetEntityAsync(c => c.Id == commentId);
+
+            if (comment is not null)
+            {
+                comment.Dislike += 1;
+                await _commentRepository.SaveChangesAsync();
+            }
+        }
     }
 }
