@@ -75,37 +75,43 @@ namespace FilmOnline.WebApi.Controllers
         {
             var checkName = await _userManager.FindByNameAsync(request.UserName);
             var checkEmail = await _userManager.FindByEmailAsync(request.Email);
+            var errorMessage = new List<object>();
 
-            if (checkName is not null || checkEmail is not null)
+            if (checkName is not null) errorMessage.Add(new { message = "Данный логин занят, придумай другой." });
+            if (checkEmail is not null) errorMessage.Add(new { message = "Данный E-mail занят, придумай другой." });
+            if (request.Password.Length < 6) errorMessage.Add(new { message = "Пароль слишком короткий. Он должен состоять минимум из 6 символов." });
+            if (request.Password != request.PasswordConfirm) errorMessage.Add(new { message = "Пароли не совпадают!." });
+            if (errorMessage.Count > 0) return BadRequest(errorMessage);
+
+            try
             {
-                return BadRequest(new { message = "Данный логин или емейл заняты" });
+                DateTime dateReg = DateTime.Now;
+                var user = new User
+                {
+                    Email = request.Email,
+                    DateReg = dateReg.ToLongDateString(),
+                    UserName = request.UserName,
+                    City = request.City,
+                    PathPhoto = request.PathPhoto,
+                    PhotoName = request.PhotoName
+                };
+
+                if (request.Password == request.PasswordConfirm)
+                {
+                    await _userManager.CreateAsync(user, request.Password);
+                    await _userManager.AddToRoleAsync(user, "User");
+                }
+                var token = _jwtService.GenerateJwtToken(user.Id, _appSettings.Secret);
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var response = new AuthenticateResponse(user, token, userRoles);
+
+                return Ok(response);
             }
-            if (request.Password.Length < 6)
+            catch (Exception error)
             {
-                return BadRequest(new { message = "Данный пароль слишком короткий" });
+                errorMessage.Add(new { message = error.Message });
+                return BadRequest(errorMessage);
             }
-
-            DateTime dateReg = DateTime.Now;
-            var user = new User
-            {
-                Email = request.Email,
-                DateReg = dateReg.ToLongDateString(),
-                UserName = request.UserName,
-                City = request.City,
-                PathPhoto = request.PathPhoto,
-                PhotoName = request.PhotoName
-            };
-
-            if (request.Password == request.PasswordConfirm)
-            {
-                await _userManager.CreateAsync(user, request.Password);
-                await _userManager.AddToRoleAsync(user, "User");
-            }
-            var token = _jwtService.GenerateJwtToken(user.Id, _appSettings.Secret);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var response = new AuthenticateResponse(user, token, userRoles);
-
-            return Ok(response);
         }
 
         [HttpPost("uploadPhoto")]

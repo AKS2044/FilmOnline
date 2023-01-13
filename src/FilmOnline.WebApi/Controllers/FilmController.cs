@@ -47,64 +47,70 @@ namespace FilmOnline.WebApi.Controllers
             var filmCountryDtos = new List<FilmCountryDto>();
             var filmStageManagerDtos = new List<FilmStageManagerDto>();
 
-            FilmDto filmDto = new()
+            try
             {
-                ImageName = request.ImageName,
-                PathPoster = request.PathPoster,
-                NameFilms = request.NameFilms,
-                AgeLimit = request.AgeLimit,
-                ReleaseDate = request.ReleaseDate,
-                Time = request.Time,
-                Description = request.Description,
-                IdRating = request.IdRating,
-                RatingSite = request.RatingSite,
-                LinkFilmtrailer = request.LinkFilmtrailer,
-                LinkFilmPlayer = request.LinkFilmPlayer
-            };
-
-            foreach (var item in request.ActorIds)
-            {
-                filmActorDtos.Add(new FilmActorDto
+                FilmDto filmDto = new()
                 {
-                    ActorId = item
-                });
-            }
+                    ImageName = request.ImageName,
+                    PathPoster = request.PathPoster,
+                    NameFilms = request.NameFilms,
+                    AgeLimit = request.AgeLimit,
+                    ReleaseDate = request.ReleaseDate,
+                    Time = request.Time,
+                    Description = request.Description,
+                    IdRating = request.IdRating,
+                    RatingSite = request.RatingSite,
+                    LinkFilmtrailer = request.LinkFilmtrailer,
+                    LinkFilmPlayer = request.LinkFilmPlayer
+                };
 
-            foreach (var item in request.GenreIds)
-            {
-                filmGenreDtos.Add(new FilmGenreDto
+                foreach (var item in request.ActorIds)
                 {
-                    GenreId = item
-                });
-            }
+                    filmActorDtos.Add(new FilmActorDto
+                    {
+                        ActorId = item
+                    });
+                }
 
-            foreach (var item in request.CountryIds)
-            {
-                filmCountryDtos.Add(new FilmCountryDto
+                foreach (var item in request.GenreIds)
                 {
-                    CountryId = item
-                });
-            }
+                    filmGenreDtos.Add(new FilmGenreDto
+                    {
+                        GenreId = item
+                    });
+                }
 
-            foreach (var item in request.StageManagerIds)
-            {
-                filmStageManagerDtos.Add(new FilmStageManagerDto
+                foreach (var item in request.CountryIds)
                 {
-                    StageManagerId = item
-                });
+                    filmCountryDtos.Add(new FilmCountryDto
+                    {
+                        CountryId = item
+                    });
+                }
+
+                foreach (var item in request.StageManagerIds)
+                {
+                    filmStageManagerDtos.Add(new FilmStageManagerDto
+                    {
+                        StageManagerId = item
+                    });
+                }
+
+                if (ModelState.IsValid)
+                {
+                    await _filmManager.CreateAsync(filmDto,
+                        filmActorDtos,
+                        filmGenreDtos,
+                        filmCountryDtos,
+                        filmStageManagerDtos);
+                }
+
+                return Ok();
             }
-
-
-            if (ModelState.IsValid)
+            catch (Exception error)
             {
-               await _filmManager.CreateAsync(filmDto, 
-                   filmActorDtos, 
-                   filmGenreDtos, 
-                   filmCountryDtos, 
-                   filmStageManagerDtos);
+                return BadRequest(new { message = error.Message });
             }
-
-            return Ok();
         }
 
         [HttpGet("")]
@@ -223,40 +229,11 @@ namespace FilmOnline.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("name")]
-        public async Task<IActionResult> GetName([FromBody] string name)
-        {
-            var film = await _filmManager.GetByNameAsync(name);
-            if (film is null)
-            {
-                return NotFound(film);
-            }
-            return Ok(film);
-        }
-
-        [HttpGet("genre")]
-        public async Task<IActionResult> GetAllFilmsByGenre([FromBody] int genre)
-        {
-            var film = await _filmManager.GetFilmByGenreAsync(genre);
-            var result = new List<FilmShortModelResponse>();
-            foreach (var item in film)
-            {
-                result.Add(new FilmShortModelResponse
-                {
-                    Id = item.Id,
-                    NameFilms = item.NameFilms,
-                    ReleaseDate = item.ReleaseDate,
-                    PathPoster = item.PathPoster
-                });
-            }
-            return Ok(result);
-        }
-
         [HttpGet("Films")]
         public async Task<IActionResult> GetAll([FromQuery] QueryParameters parameters)
         {
 
-            var film = await _filmManager.GetAllAsync(parameters.Page, parameters.GenreId);
+            var film = await _filmManager.GetAllAsync(parameters.Page, parameters.GenreId, parameters.CountryId, parameters.Search);
 
             return Ok(film);
         }

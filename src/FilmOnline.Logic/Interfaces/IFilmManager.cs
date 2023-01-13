@@ -84,9 +84,11 @@ namespace FilmOnline.Logic.Interfaces
         /// Get all short information Film.
         /// </summary>
         /// <param name="page">Page films.</param>
-        /// <param name="genre">genre films.</param>
+        /// <param name="genreId">Genre identifier.</param>
+        /// <param name="countryId">Country identifier.</param>
+        /// <param name="search">Search query.</param>
         /// <returns>Film data transfer objects.</returns>
-        Task<IEnumerable<FilmDto>> GetAllAsync(int page, int GenreId);
+        Task<IEnumerable<FilmDto>> GetAllAsync(int page, int genreId, int countryId, string search);
 
         /// <summary>
         /// Get films for slider.

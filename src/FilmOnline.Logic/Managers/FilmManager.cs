@@ -284,17 +284,62 @@ namespace FilmOnline.Logic.Managers
             await _filmRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<FilmDto>> GetAllAsync(int page, int genreId)
+        public async Task<IEnumerable<FilmDto>> GetAllAsync(int page, int genreId, int countryId, string search)
         {
             int pageSize = 20;
-            var FilmDtos = new List<FilmDto>();
+            var filmDtos = new List<FilmDto>();
+            if (search is not null)
+            {
+                var filmSearch = await _filmRepository.GetAll()
+                    .Where(f => f.NameFilms.Contains(search))
+                    .Select(r => new FilmDto
+                {
+                    Id = r.Id,
+                    NameFilms = r.NameFilms,
+                    PathPoster = r.PathPoster,
+                    ReleaseDate = r.ReleaseDate,
+                    ImageName = r.ImageName
+                }).ToListAsync();
+
+                filmDtos = filmSearch;
+
+                var sortItems = filmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                return sortItems;
+            }
+            if (genreId != 0 || countryId != 0)
+            {
+                var filmCountryIds = await _filmCountryRepository.GetAll()
+                    .Where(f => f.CountryId == countryId)
+                    .Select(f => f.FilmId)
+                    .ToListAsync();
+                var filmGenreIds = await _filmGenreRepository.GetAll()
+                    .Where(f => f.GenreId == genreId)
+                    .Select(f => f.FilmId)
+                    .ToListAsync();
+                var filmsSortGenre = await _filmRepository.GetAll()
+                    .Where(r => filmGenreIds
+                    .Contains(r.Id))
+                    .Select(r => new FilmDto
+                {
+                    Id = r.Id,
+                    NameFilms = r.NameFilms,
+                    PathPoster = r.PathPoster,
+                    ReleaseDate = r.ReleaseDate,
+                    ImageName = r.ImageName
+                }).ToListAsync();
+
+                filmDtos = filmsSortGenre;
+
+                var sortItems = filmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                return sortItems;
+            }
 
             var films = await _filmRepository
                 .GetAll().ToListAsync();
 
             foreach (var item in films)
             {
-                FilmDtos.Add(new FilmDto
+                filmDtos.Add(new FilmDto
                 {
                     Id = item.Id,
                     NameFilms = item.NameFilms,
@@ -303,26 +348,8 @@ namespace FilmOnline.Logic.Managers
                     RatingSite = item.RatingSite,
                 });
             }
-
-            if (genreId != 0)
-            {
-                var filmGenreIds = await _filmGenreRepository.GetAll().Where(f => f.GenreId == genreId).Select(f => f.FilmId).ToListAsync();
-                //var itemss = await _filmRepository.GetAll().Where(g => filmGenreIds.Contains(g.Id)).ToListAsync();
-                var filmsSortGenreParams = await _filmRepository.GetAll().Where(r => filmGenreIds.Contains(r.Id)).Select(r => new FilmDto
-                {
-                    Id = r.Id,
-                    NameFilms = r.NameFilms,
-                    PathPoster = r.PathPoster,
-                    ReleaseDate = r.ReleaseDate,
-                    ImageName = r.ImageName
-                }).ToListAsync();
-                var filmsGetGenreParams = filmsSortGenreParams.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-                return filmsGetGenreParams;
-            }
-
-            var items = FilmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
+            
+            var items = filmDtos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return items;
         }
 
@@ -397,7 +424,10 @@ namespace FilmOnline.Logic.Managers
                 LastName = a.LastName,
             }).ToListAsync();
 
-            totalRating = (float)ratings.Sum() / (float)ratings.Count;
+            if (ratings.Count > 0)
+            {
+                totalRating = (float)ratings.Sum() / (float)ratings.Count;
+            }
 
             if (film.IdRating != 0)
             {
