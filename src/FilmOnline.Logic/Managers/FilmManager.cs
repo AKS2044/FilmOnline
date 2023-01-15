@@ -400,19 +400,21 @@ namespace FilmOnline.Logic.Managers
 
         public async Task<FilmModelResponse> GetByIdAsync(int id)
         {
+            Film film = await _filmRepository.GetEntityAsync(f => f.Id == id);
+            if (film == null) return null;
             float totalRating = 0f;
             string kinopoiskRating = "0";
             string kinopoiskImdb = "0";
 
-            Film film = await _filmRepository.GetEntityAsync(f => f.Id == id);
+            
             var filmCountryIds = await _filmCountryRepository.GetAll().Where(f => f.FilmId == film.Id).Select(f => f.CountryId).ToListAsync();
-            var countries = await _countryRepository.GetAll().Where(c => filmCountryIds.Contains(c.Id)).Select(c => c.Country).ToListAsync();
+            var countries = await _countryRepository.GetAll().Where(c => filmCountryIds.Contains(c.Id)).Select(c => c).ToListAsync();
 
             var filmGenreIds = await _filmGenreRepository.GetAll().Where(f => f.FilmId == film.Id).Select(f => f.GenreId).ToListAsync();
-            var genres = await _genreRepository.GetAll().Where(g => filmGenreIds.Contains(g.Id)).Select(g => g.Genres).ToListAsync();
+            var genres = await _genreRepository.GetAll().Where(g => filmGenreIds.Contains(g.Id)).Select(g => g).ToListAsync();
 
             var filmStageManagerIds = await _filmStageManagerRepository.GetAll().Where(f => f.FilmId == film.Id).Select(f => f.StageManagerId).ToListAsync();
-            var stageManagers = await _stageManagerRepository.GetAll().Where(m => filmStageManagerIds.Contains(m.Id)).Select(m => m.StageManagers).ToListAsync();
+            var stageManagers = await _stageManagerRepository.GetAll().Where(m => filmStageManagerIds.Contains(m.Id)).Select(m => m).ToListAsync();
 
             var filmRatingIds = await _filmRatingRepository.GetAll().Where(r => r.FilmId == id).Select(r => r.RatingId).ToListAsync();
             var ratings = await _ratingRepository.GetAll().Where(c => filmRatingIds.Contains(c.Id)).Select(c => c.Ratings).ToListAsync();

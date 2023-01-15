@@ -117,6 +117,7 @@ namespace FilmOnline.WebApi.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var film = await _filmManager.GetByIdAsync(id);
+            if (film == null) return NotFound(new { message = "Ничего не найдено!" });
 
             return Ok(film);
         }

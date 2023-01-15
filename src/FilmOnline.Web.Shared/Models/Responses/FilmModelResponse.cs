@@ -53,17 +53,17 @@ namespace FilmOnline.Web.Shared.Models.Responses
         /// <summary>
         /// Actor.
         /// </summary>
-        public List<string> Country { get; set; }
+        public List<State> Country { get; set; }
 
         /// <summary>
         /// Genre.
         /// </summary>
-        public List<string> Genre { get; set; }
+        public List<Genre> Genre { get; set; }
 
         /// <summary>
         /// Stage manager.
         /// </summary>
-        public List<string> StageManagers { get; set; }
+        public List<StageManager> StageManagers { get; set; }
 
         /// <summary>
         /// Actors.
